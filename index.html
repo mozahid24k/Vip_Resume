@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mozahidul Islam · Precision Resume Editor</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700;900&family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Merriweather:wght@300;400;700;900&family=Source+Code+Pro:wght@300;400;500;600;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0b0f;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px;
+    }
+
+    .app-wrapper {
+      max-width: 1400px;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      justify-content: center;
+    }
+
+    .editor-panel {
+      flex: 1.1;
+      min-width: 380px;
+      background: rgba(20, 20, 28, 0.9);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px 24px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6);
+      height: fit-content;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .editor-panel::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .editor-panel::-webkit-scrollbar-track {
+      background: #1e1e24;
+      border-radius: 10px;
+    }
+
+    .editor-panel::-webkit-scrollbar-thumb {
+      background: #ef4444;
+      border-radius: 10px;
+    }
+
+    .section-card {
+      background: #111114;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 28px;
+      border: 1px solid #26262c;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #ef4444;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 3px solid #ef4444;
+      padding-left: 12px;
+    }
+
+    /* Color swatch styles */
+    .color-themes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .color-swatch {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.1s ease, border 0.1s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.05);
+      border-color: #ef4444;
+    }
+
+    .color-swatch.active {
+      border-color: white;
+      box-shadow: 0 0 0 2px #ef4444;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #aaa;
+      display: block;
+      margin-bottom: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      background: #1c1c22;
+      border: 1px solid #2e2e38;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: white;
+      font-family: 'Inter', monospace;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .repeater-item {
+      background: #0c0c10;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #26262c;
+      position: relative;
+    }
+
+    .repeater-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 40px;
+      background: rgba(239, 68, 68, 0.1);
+      transition: 0.2s;
+    }
+
+    .btn-remove:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-add {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed #3a3a44;
+      border-radius: 40px;
+      padding: 10px;
+      color: #ccc;
+      font-weight: 500;
+      margin-top: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-add:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .btn-primary {
+      background: #ef4444;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      color: white;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .preview-panel {
+      flex: 1.4;
+      min-width: 540px;
+      background: #101012;
+      border-radius: 28px;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .resume-original {
+      width: 210mm;
+      min-height: 297mm;
+      background: white;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 20px 35px -10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      font-family: var(--resume-font-family, 'Inter', 'Segoe UI', Arial, sans-serif);
+      color: #111;
+      transition: all 0.1s ease;
+    }
+
+    .resume-sidebar-exact {
+      width: 32%;
+      /* default gradient (will be overridden by JS theme) */
+      background: linear-gradient(150deg, #1e3a5f 0%, #244b74 100%);
+      color: #fff;
+      padding: 30px 24px 30px 28px;
+      display: flex;
+      flex-direction: column;
+      margin: 12px 0 0 12px;
+      border-radius: 12px 12px 0 0;
+      transition: background 0.2s ease;
+    }
+
+    .profile-qr-area {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .qr-box {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 12px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-name-exact {
+      font-size: var(--font-size-name, 26px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: white;
+      text-align: center;
+      margin-left: -14px;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar-head {
+      font-size: var(--font-size-sidebar-head, 15px);
+      font-weight: 800;
+      color: white;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      padding-bottom: 6px;
+      margin: 24px 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .contact-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: var(--font-size-sidebar-body, 11.5px);
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .contact-link {
+      color: rgba(255, 255, 255, 0.95);
+      text-decoration: none;
+      transition: opacity 0.2s;
+      word-break: break-all;
+    }
+
+    .contact-link:hover {
+      opacity: 0.7;
+      text-decoration: underline;
+    }
+
+    .contact-line svg {
+      width: 16px;
+      height: 16px;
+      stroke: rgba(255, 255, 255, 0.8);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .skill-bullet {
+      list-style: none;
+      font-size: var(--font-size-sidebar-body, 11.5px);
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 4px;
+      padding-left: 14px;
+      position: relative;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .skill-bullet::before {
+      content: "•";
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+      position: absolute;
+      left: 0;
+      top: 0px;
+    }
+
+    .edu-item {
+      font-size: var(--font-size-sidebar-body, 11.5px);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .lang-item {
+      margin-bottom: 12px;
+    }
+
+    .lang-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--font-size-sidebar-body, 11.5px);
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    .progress-bg {
+      background: rgba(255, 255, 255, 0.2);
+      height: 5px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: white;
+      width: 0%;
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .resume-main-exact {
+      width: 68%;
+      padding: 64px 32px 32px 32px;
+      background: white;
+    }
+
+    .main-section-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .main-title-text {
+      font-size: var(--font-size-main-head, 17px);
+      font-weight: 800;
+      color: #1e3a5f;
+      margin-right: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .main-title-line {
+      flex: 1;
+      height: 2px;
+      background-color: #e2e8f0;
+      margin-top: 2px;
+    }
+
+    .summary-text {
+      font-size: var(--font-size-summary, 11.5px);
+      line-height: 1.7;
+      color: #334155;
+      text-align: justify;
+      margin-bottom: 24px;
+    }
+
+    .exp-node {
+      margin-bottom: 20px;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .exp-title {
+      font-size: var(--font-size-exp-title, 14px);
+      font-weight: 800;
+      color: #1e3a5f;
+    }
+
+    .exp-date {
+      font-size: var(--font-size-exp-bullets, 11.5px);
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .exp-company {
+      font-size: var(--font-size-exp-company, 12.5px);
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 8px;
+    }
+
+    .exp-desc-list {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .exp-desc-list li {
+      font-size: var(--font-size-exp-bullets, 11.5px);
+      line-height: 1.6;
+      margin-bottom: 4px;
+      padding-left: 18px;
+      position: relative;
+      color: #334155;
+    }
+
+    .exp-desc-list li::before {
+      content: "•";
+      color: #94a3b8;
+      font-size: 14px;
+      position: absolute;
+      left: 0;
+      top: 0px;
+    }
+
+    .about-icon-link {
+      text-decoration: none;
+      color: inherit;
+      display: inline-flex;
+      align-items: center;
+      margin-right: 12px;
+      transition: opacity 0.2s;
+      font-size: var(--font-size-main-head, 17px);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .about-icon-link:hover {
+      opacity: 0.7;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .editor-panel,
+      .btn-primary,
+      .app-wrapper>*:not(.preview-panel) {
+        display: none;
+      }
+
+      .preview-panel {
+        padding: 0;
+        background: white;
+        box-shadow: none;
+        display: block;
+        min-width: 0;
+      }
+
+      .resume-original {
+        box-shadow: none;
+        margin: 0;
+        width: 210mm;
+        min-height: auto;
+        transform: none !important;
+      }
+
+      .exp-node,
+      .edu-item {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 1000px) and (min-width: 769px) {
+      .resume-original {
+        transform: scale(0.75);
+        transform-origin: top center;
+      }
+    }
+
+    /* ===== REVERSED LAYOUT (sidebar right) ===== */
+    .resume-original.layout-reversed {
+      flex-direction: row-reverse;
+    }
+    .resume-original.layout-reversed .resume-sidebar-exact {
+      margin: 12px 12px 0 0;
+      border-radius: 12px 12px 0 0;
+    }
+    .resume-original.layout-reversed .resume-main-exact {
+      padding: 64px 32px 32px 32px;
+    }
+
+    /* Layout toggle buttons */
+    .layout-toggle {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .btn-layout {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #3a3a44;
+      border-radius: 14px;
+      padding: 10px 8px;
+      color: #aaa;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-layout:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .btn-layout.active {
+      background: rgba(239,68,68,0.12);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .layout-icon {
+      display: flex;
+      gap: 3px;
+      height: 22px;
+      align-items: stretch;
+    }
+    .layout-icon .li-side {
+      width: 10px;
+      border-radius: 3px;
+      background: currentColor;
+      opacity: 0.8;
+    }
+    .layout-icon .li-main {
+      width: 22px;
+      border-radius: 3px;
+      background: currentColor;
+      opacity: 0.3;
+    }
+    .summary-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #888;
+    }
+    .char-count-bar {
+      height: 3px;
+      border-radius: 3px;
+      margin-top: 5px;
+      background: #2e2e38;
+      overflow: hidden;
+    }
+    .char-count-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.2s, background 0.2s;
+      background: #ef4444;
+    }
+    .char-count-label {
+      font-size: 11px;
+      color: #888;
+      transition: color 0.2s;
+    }
+    .char-count-label.good { color: #22c55e; }
+    .char-count-label.warn { color: #f59e0b; }
+    .char-count-label.over { color: #ef4444; }
+
+    /* ===== PREVIEW REFRESH DOT (mobile) ===== */
+    #previewUpdateDot {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+      animation: pulseGreen 1.4s infinite;
+    }
+    @keyframes pulseGreen {
+      0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+      70%  { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    #tabPreviewBtn { position: relative; }
+    @media (max-width: 768px) {
+      #previewUpdateDot { display: block; }
+    }
+
+    /* ===== JSON EXPORT / IMPORT SECTION ===== */
+    .json-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-json {
+      flex: 1;
+      min-width: 120px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #3a3a44;
+      border-radius: 40px;
+      padding: 10px 14px;
+      color: #ccc;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: 0.2s;
+      letter-spacing: 0.4px;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-json:hover {
+      background: rgba(239,68,68,0.1);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .btn-json.import:hover {
+      background: rgba(59,130,246,0.1);
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    .json-toast {
+      display: none;
+      margin-top: 10px;
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .json-toast.success { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .json-toast.error   { background: rgba(239,68,68,0.15);  color: #ef4444;  border: 1px solid rgba(239,68,68,0.3); }
+
+    /* Mobile adjustments for new elements */
+    @media (max-width: 768px) {
+      .json-actions { flex-direction: column; }
+      .btn-json { min-width: 0; width: 100%; }
+    }
+
+    /* Temporary clone styles for PDF generation (no visual effect on main UI) */
+    .pdf-clone-wrapper {
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      z-index: -9999;
+      background: white;
+      width: 210mm;
+      box-shadow: none;
+    }
+
+    /* ===== PDF-FRIENDLY (HR / Print version) ===== */
+    .resume-original.pdf-friendly .resume-sidebar-exact {
+      background: #eef2f5 !important;
+      background-image: none !important;
+      color: #111 !important;
+      border-right: 1px solid #cfcfcf;
+    }
+    .resume-original.pdf-friendly .resume-sidebar-exact .profile-name-exact,
+    .resume-original.pdf-friendly .resume-sidebar-exact .sidebar-head,
+    .resume-original.pdf-friendly .resume-sidebar-exact .contact-line,
+    .resume-original.pdf-friendly .resume-sidebar-exact .contact-link,
+    .resume-original.pdf-friendly .resume-sidebar-exact .skill-bullet,
+    .resume-original.pdf-friendly .resume-sidebar-exact .edu-item,
+    .resume-original.pdf-friendly .resume-sidebar-exact .lang-meta,
+    .resume-original.pdf-friendly .resume-sidebar-exact .lang-meta span {
+      color: #111 !important;
+    }
+    .resume-original.pdf-friendly .resume-sidebar-exact .skill-bullet::before {
+      color: #111 !important;
+    }
+    .resume-original.pdf-friendly .resume-sidebar-exact .contact-line img {
+      filter: none !important;
+    }
+    .resume-original.pdf-friendly .resume-sidebar-exact .contact-link svg { stroke: #111 !important; fill: none; }
+    .resume-original.pdf-friendly .progress-bg { background: #d4d4d4; }
+    .resume-original.pdf-friendly .progress-fill { background: #2c3e50; }
+    .resume-original.pdf-friendly .main-title-text { color: #0f172a; }
+    .resume-original.pdf-friendly .exp-title,
+    .resume-original.pdf-friendly .exp-desc-list li { color: #0f172a; }
+    .resume-original.pdf-friendly .exp-company { color: #2563eb; }
+    .resume-original.pdf-friendly .qr-box img { filter: grayscale(20%) brightness(0.96); }
+
+    /* ===== MOBILE TAB BAR ===== */
+    .mobile-tab-bar {
+      display: none;
+    }
+
+    /* Mobile bottom bar hidden on desktop by default */
+    .mobile-bottom-bar {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 0;
+        padding-bottom: 80px;
+        background: #0b0b0f;
+      }
+
+      /* Sticky top tab bar */
+      .mobile-tab-bar {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: #0b0b0f;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        width: 100%;
+      }
+
+      .mobile-tab-bar button {
+        flex: 1;
+        padding: 14px 10px;
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: color 0.2s;
+        border-bottom: 3px solid transparent;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .mobile-tab-bar button.active {
+        color: #ef4444;
+        border-bottom-color: #ef4444;
+      }
+
+      /* App wrapper becomes single-column stacked */
+      .app-wrapper {
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      /* Editor panel fills width, no min-width */
+      .editor-panel {
+        min-width: 0;
+        width: 100%;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        max-height: none;
+        overflow-y: visible;
+        padding: 20px 16px;
+        flex: none;
+      }
+
+      /* Preview panel fills width */
+      .preview-panel {
+        min-width: 0;
+        width: 100%;
+        border-radius: 0;
+        padding: 16px 12px;
+        flex: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Resume scales down to fit mobile */
+      .resume-original {
+        transform: scale(0.42);
+        transform-origin: top left;
+        /* The resume is 210mm ≈ 794px. After 0.42 scale → ~334px wide which fits phones */
+        margin-bottom: calc((297mm * 0.42) - (297mm));
+      }
+
+      /* Preview panel wrapper needs correct height so scrolling works */
+      .preview-panel {
+        display: block;
+        overflow: hidden;
+      }
+
+      /* preview scroll wrapper */
+      #resumeScaleWrapper {
+        width: calc(210mm * 0.42);
+        overflow: visible;
+      }
+
+      /* Hide the non-active tab panel on mobile */
+      .editor-panel.tab-hidden,
+      .preview-panel.tab-hidden {
+        display: none !important;
+      }
+
+      /* Larger tap targets for inputs */
+      input,
+      textarea,
+      select {
+        font-size: 16px !important; /* prevents iOS zoom */
+        padding: 12px 14px !important;
+        border-radius: 10px !important;
+      }
+
+      input[type="range"] {
+        padding: 8px 0 !important;
+        height: 36px;
+        cursor: pointer;
+      }
+
+      /* Form rows stack on mobile */
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .form-group {
+        min-width: 0;
+        width: 100%;
+      }
+
+      /* Color swatches — bigger touch targets */
+      .color-swatch {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+      }
+
+      /* Bigger remove/add buttons */
+      .btn-remove {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .btn-add {
+        padding: 14px 10px;
+        font-size: 13px;
+      }
+
+      .btn-primary {
+        padding: 16px 20px;
+        font-size: 15px;
+        border-radius: 16px;
+      }
+
+      /* Section cards */
+      .section-card {
+        border-radius: 16px;
+        padding: 16px 14px;
+        margin-bottom: 20px;
+      }
+
+      /* Repeater items */
+      .repeater-item {
+        padding: 14px 12px;
+        border-radius: 12px;
+      }
+
+      /* Language slider row */
+      .lang-level-slider {
+        width: 100% !important;
+        margin-top: 8px;
+      }
+
+      /* Fix select dropdown on mobile */
+      select {
+        -webkit-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ef4444' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 14px center !important;
+        padding-right: 36px !important;
+      }
+
+      /* Sticky bottom bar for primary action buttons on mobile */
+      .mobile-bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        gap: 10px;
+        padding: 12px 16px;
+        background: #0b0b0f;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        z-index: 999;
+      }
+
+      .mobile-bottom-bar .btn-primary {
+        flex: 1;
+        margin-top: 0;
+        padding: 13px 10px;
+        font-size: 12px;
+        border-radius: 12px;
+      }
+
+      /* Hide the inline buttons (they move to bottom bar) */
+      #loadOriginalBtn,
+      #downloadPdfBtn,
+      #downloadPdfBtn2 {
+        display: none;
+      }
+    }
+
+    /* Slightly better mid-range tablets */
+    @media (min-width: 769px) and (max-width: 1100px) {
+      .resume-original {
+        transform: scale(0.72);
+        transform-origin: top center;
+      }
+
+      .preview-panel {
+        min-width: 420px;
+      }
+
+      .editor-panel {
+        min-width: 320px;
+      }
+    }
+
+  /* ===== PAYMENT MODAL ===== */
+  #paymentModal {
+    display: none; position: fixed; inset: 0; z-index: 99999;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  #paymentModal.active { display: flex; }
+  .pay-modal-box {
+    background: #1e293b; border: 1px solid #334155; border-radius: 16px;
+    padding: 32px 28px; width: 100%; max-width: 420px; margin: 16px;
+    color: #f1f5f9; box-shadow: 0 25px 60px rgba(0,0,0,0.5); position: relative;
+  }
+  .pay-modal-close {
+    position: absolute; top: 14px; right: 18px; background: none; border: none;
+    color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;
+  }
+  .pay-modal-close:hover { color: #f1f5f9; }
+  .pay-modal-title { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .pay-modal-amount { text-align: center; font-size: 28px; font-weight: 800; color: #3b82f6; margin-bottom: 20px; }
+  .pay-modal-amount span { font-size: 16px; color: #94a3b8; font-weight: 500; margin-left: 8px; }
+  .pay-modal-btns { display: flex; gap: 12px; margin-bottom: 16px; }
+  .pay-btn {
+    flex: 1; padding: 13px 10px; border-radius: 10px; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .pay-btn-upi { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+  .pay-btn-upi:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.4); }
+  .pay-btn-bank { background: linear-gradient(135deg, #0f766e, #0d9488); color: white; }
+  .pay-btn-bank:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13,148,136,0.4); }
+  .pay-bank-panel {
+    display: none; background: #0f172a; border: 1px solid #1e3a5f;
+    border-radius: 12px; padding: 18px; margin-bottom: 16px;
+  }
+  .pay-bank-panel.active { display: block; }
+  .pay-bank-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; border-bottom: 1px solid #1e293b;
+  }
+  .pay-bank-row:last-child { border-bottom: none; }
+  .pay-bank-label { color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pay-bank-value { color: #e2e8f0; font-weight: 600; font-size: 13px; }
+  .pay-copy-btn {
+    background: #334155; border: none; color: #94a3b8;
+    font-size: 10px; padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+  }
+  .pay-copy-btn:hover { background: #475569; color: #f1f5f9; }
+  .pay-copy-btn.copied { background: #166534; color: #4ade80; }
+  .pay-qr-area {
+    width: 130px; height: 130px; background: white; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 14px auto 0; border: 2px dashed #334155; overflow: hidden;
+  }
+  .pay-qr-placeholder-text { color: #94a3b8; font-size: 11px; text-align: center; padding: 8px; }
+  .pay-whatsapp-btn {
+    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, #25d366, #128c7e); color: white;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.2s; margin-top: 4px;
+  }
+  .pay-whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,0.35); }
+  .pay-whatsapp-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .pay-note { text-align: center; font-size: 11px; color: #475569; margin-top: 12px; line-height: 1.5; }
+
+  /* ===== ADMIN SYSTEM ===== */
+  #adminTrigger {
+    position: fixed; bottom: 8px; left: 8px; width: 18px; height: 18px;
+    background: transparent; border: 1px solid #1e293b; border-radius: 3px;
+    cursor: pointer; z-index: 99998; opacity: 0.15; transition: opacity 0.2s;
+  }
+  #adminTrigger:hover { opacity: 0.5; }
+  #adminTrigger.logged-in { background: #22c55e; opacity: 0.4; border-color: #22c55e; }
+  @media (max-width: 768px) {
+    #adminTrigger {
+      width: 36px; height: 36px; bottom: 90px; left: 8px;
+      border: 2px solid #334155; border-radius: 6px; opacity: 0.25;
+    }
+  }
+  #adminLoginModal {
+    display: none; position: fixed; inset: 0; z-index: 999999;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  #adminLoginModal.active { display: flex; }
+  .admin-box {
+    background: #0f172a; border: 1px solid #1e3a5f; border-radius: 16px;
+    padding: 36px 32px; width: 100%; max-width: 360px; margin: 16px;
+  }
+  .admin-title { font-size: 18px; font-weight: 700; color: #f1f5f9; text-align: center; margin-bottom: 24px; }
+  .admin-input {
+    width: 100%; padding: 11px 14px; background: #1e293b; border: 1px solid #334155;
+    border-radius: 8px; color: #f1f5f9; font-size: 14px; margin-bottom: 12px;
+    box-sizing: border-box; outline: none;
+  }
+  .admin-input:focus { border-color: #3b82f6; }
+  .admin-login-btn {
+    width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border: none; border-radius: 8px; color: white; font-size: 15px;
+    font-weight: 700; cursor: pointer; margin-top: 4px;
+  }
+  .admin-error { color: #f87171; font-size: 12px; text-align: center; margin-top: 8px; display: none; }
+  #adminLoadBtn {
+    display: none; position: fixed; bottom: 80px; left: 16px;
+    background: #22c55e; color: white; border: none; border-radius: 8px;
+    padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+    z-index: 9999; box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+  }
+  #adminLoadBtn:hover { background: #16a34a; }
+  #adminJsonInput { display: none; }
+  </style>
+</head>
+
+<body>
+  <!-- Mobile tab bar (hidden on desktop via CSS) -->
+  <div class="mobile-tab-bar">
+    <button id="tabEditorBtn" class="active" onclick="switchTab('editor')">✏️ Editor</button>
+    <button id="tabPreviewBtn" onclick="switchTab('preview')">👁 Preview<span id="previewUpdateDot" title="Preview has unseen updates"></span></button>
+  </div>
+
+  <div class="app-wrapper">
+    <div class="editor-panel" id="editorPanel">
+      <div class="section-card">
+        <div class="section-title">⚡ IDENTITY MATRIX</div>
+        <div class="form-row">
+          <div class="form-group"><label>Full name</label><input type="text" id="fullName"
+              placeholder="Mozahidul Islam"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="tel" id="phoneField" placeholder="0573008727"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="emailField"
+              placeholder="mozahid24k@gmail.com"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Location</label><input type="text" id="locationField"
+              placeholder="Riyadh, Saudi Arabia"></div>
+          <div class="form-group"><label>Portfolio Website</label><input type="url" id="portfolioField"
+              placeholder="https://myportfolio.com"></div>
+        </div>
+        <div class="form-group">
+          <label>Profile Image / QR Code</label>
+          <input type="file" id="qrFileInput" accept="image/*">
+          <input type="hidden" id="qrUrl">
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">🎨 SIDEBAR COLOR THEMES</div>
+        <div class="color-themes" id="colorThemesContainer"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">🗂 LAYOUT TEMPLATE</div>
+        <div class="layout-toggle">
+          <button class="btn-layout active" id="layoutNormalBtn" onclick="setLayout('normal')">
+            <div class="layout-icon">
+              <div class="li-side"></div>
+              <div class="li-main"></div>
+            </div>
+            Sidebar Left
+          </button>
+          <button class="btn-layout" id="layoutReversedBtn" onclick="setLayout('reversed')">
+            <div class="layout-icon">
+              <div class="li-main"></div>
+              <div class="li-side"></div>
+            </div>
+            Sidebar Right
+          </button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">✍️ TYPOGRAPHY & TEXT SIZES</div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Font Style (11 Premium Fonts)</label>
+          <select id="fontStyleSelect"
+            style="width:100%; background:#1c1c22; border:1px solid #2e2e38; border-radius:12px; padding:10px 14px; color:white; font-family:'Inter', sans-serif; font-size:13px; transition:0.2s;">
+            <option value="'Calibri', sans-serif">Calibri (Body)</option>
+            <option value="'Inter', sans-serif">Inter (Modern & Clean)</option>
+            <option value="'Roboto', sans-serif">Roboto (Structured & Professional)</option>
+            <option value="'Open Sans', sans-serif">Open Sans (Highly Readable)</option>
+            <option value="'Lato', sans-serif">Lato (Warm & Friendly)</option>
+            <option value="'Montserrat', sans-serif">Montserrat (Bold & Elegant)</option>
+            <option value="'Poppins', sans-serif">Poppins (Stylish & Geometric)</option>
+            <option value="'Playfair Display', serif">Playfair Display (Classic Serif)</option>
+            <option value="'Merriweather', serif">Merriweather (Elegant Serif)</option>
+            <option value="'Source Code Pro', monospace">Source Code Pro (Tech & Monospace)</option>
+            <option value="'Outfit', sans-serif">Outfit (Premium & Minimalist)</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Full Name
+                Size</span><span id="val-name" style="color:#ef4444; font-weight:600;">24px</span></label>
+            <input type="range" id="size-name" min="16" max="40" value="24" step="1"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Sidebar Headings
+                Size</span><span id="val-sb-head" style="color:#ef4444; font-weight:600;">15px</span></label>
+            <input type="range" id="size-sb-head" min="10" max="24" value="15" step="1"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Sidebar Body
+                Size</span><span id="val-sb-body" style="color:#ef4444; font-weight:600;">13px</span></label>
+            <input type="range" id="size-sb-body" min="8" max="18" value="13" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Main Headings
+                Size</span><span id="val-main-head" style="color:#ef4444; font-weight:600;">15px</span></label>
+            <input type="range" id="size-main-head" min="12" max="28" value="15" step="1"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Summary Text
+                Size</span><span id="val-summary" style="color:#ef4444; font-weight:600;">14px</span></label>
+            <input type="range" id="size-summary" min="8" max="18" value="14" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Experience Title
+                Size</span><span id="val-exp-title" style="color:#ef4444; font-weight:600;">15px</span></label>
+            <input type="range" id="size-exp-title" min="10" max="22" value="15" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Experience Company
+                Size</span><span id="val-exp-company" style="color:#ef4444; font-weight:600;">14px</span></label>
+            <input type="range" id="size-exp-company" min="10" max="20" value="14" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Experience Bullets
+                Size</span><span id="val-exp-bullets" style="color:#ef4444; font-weight:600;">13px</span></label>
+            <input type="range" id="size-exp-bullets" min="8" max="18" value="13" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">📄 ABOUT ME (SUMMARY)</div>
+        <textarea id="summaryText" rows="5" placeholder="Professional summary..."></textarea>
+        <div class="char-count-bar"><div class="char-count-fill" id="charFill" style="width:0%"></div></div>
+        <div class="summary-meta">
+          <span class="char-count-label" id="charLabel">0 characters</span>
+          <span style="color:#555;">Ideal: 300–500 chars</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">🔧 CORE SKILLS</div>
+        <div id="skillsContainer"></div>
+        <button class="btn-add" id="addSkillBtn">+ ADD SKILL</button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">💼 WORK EXPERIENCE</div>
+        <div id="expContainer"></div>
+        <button class="btn-add" id="addExpBtn">+ ADD EXPERIENCE</button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">🎓 EDUCATION</div>
+        <div id="eduContainer"></div>
+        <button class="btn-add" id="addEduBtn">+ ADD DEGREE</button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">🌐 LANGUAGES</div>
+        <div id="langContainer"></div>
+        <button class="btn-add" id="addLangBtn">+ ADD LANGUAGE</button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">💾 BACKUP & RESTORE</div>
+        <div class="json-actions">
+          <button class="btn-json export" id="exportJsonBtn">⬇ Export JSON</button>
+          <button class="btn-json import" id="importJsonBtn">⬆ Import JSON</button>
+        </div>
+        <input type="file" id="importJsonInput" accept=".json" style="display:none;">
+        <div class="json-toast" id="jsonToast"></div>
+      </div>
+
+      <button class="btn-primary" id="loadOriginalBtn" style="margin-bottom: 12px;">📄 LOAD MY ORIGINAL RESUME</button>
+      <button class="btn-primary" id="downloadPdfBtn" style="background: #3b82f6;">⬇️ DOWNLOAD PDF</button>
+      <button class="btn-primary" id="downloadPdfBtn2" style="background: #6b7280; margin-top: 8px;">🖨️ DOWNLOAD 2 (HR Print)</button>
+    </div>
+
+    <div class="preview-panel" id="previewPanel">
+      <div id="resumeScaleWrapper">
+        <div class="resume-original" id="resumePreview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile sticky bottom bar for action buttons -->
+  <div class="mobile-bottom-bar">
+    <button class="btn-primary" onclick="loadOriginalResume()" style="background:#ef4444;">📄 Load Resume</button>
+    <button class="btn-primary" onclick="isAdmin ? downloadResumeAsPDF() : openPaymentModal('normal')" style="background:#3b82f6;">⬇️ Download PDF</button>
+    <button class="btn-primary" onclick="isAdmin ? downloadResumeAsPDF_HR() : openPaymentModal('hr')" style="background:#6b7280;">🖨️ Download 2</button>
+  </div>
+
+
+<!-- ===== PAYMENT MODAL ===== -->
+<div id="paymentModal">
+  <div class="pay-modal-box">
+    <button class="pay-modal-close" onclick="closePaymentModal()">✕</button>
+    <div class="pay-modal-title">💳 Complete Payment to Download</div>
+    <div class="pay-modal-amount">₹100 <span>/ 20 SR</span></div>
+    <div class="pay-modal-btns">
+      <button class="pay-btn pay-btn-upi" onclick="togglePanel('upiPanel',this)">📱 Pay via UPI</button>
+      <button class="pay-btn pay-btn-bank" onclick="togglePanel('bankPanel',this)">🏦 Account Details</button>
+    </div>
+    <!-- UPI Panel -->
+    <div class="pay-bank-panel" id="upiPanel">
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Name</span>
+        <span class="pay-bank-value">Mozahidul Islam</span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">UPI ID</span>
+        <span class="pay-bank-value" style="display:flex;align-items:center;gap:8px;">
+          <span>9471941594@ybl</span>
+          <button onclick="copyText('9471941594@ybl','upiCopyBtn')" id="upiCopyBtn" class="pay-copy-btn">Copy</button>
+        </span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Amount</span>
+        <span class="pay-bank-value" style="color:#3b82f6;">₹100</span>
+      </div>
+      <div class="pay-qr-area">
+    <img src="1.png" alt="QR Code" class="pay-qr-image">
+</div>
+    </div>
+    <!-- Bank Panel -->
+    <div class="pay-bank-panel" id="bankPanel">
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Account Holder</span>
+        <span class="pay-bank-value">Mozahidul Islam</span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Bank Name</span>
+        <span class="pay-bank-value">AL Rajhi</span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Account Number</span>
+        <span class="pay-bank-value" style="display:flex;align-items:center;gap:8px;">
+          <span>077040010006082364356</span>
+          <button onclick="copyText('077040010006082364356','accCopyBtn')" id="accCopyBtn" class="pay-copy-btn">Copy</button>
+        </span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">IBAN</span>
+        <span class="pay-bank-value" style="display:flex;align-items:center;gap:8px;">
+          <span>SA16 8000085960801236 4356</span>
+          <button onclick="copyText('SA16 8000085960801236 4356','ifscCopyBtn')" id="ifscCopyBtn" class="pay-copy-btn">Copy</button>
+        </span>
+      </div>
+      <div class="pay-bank-row">
+        <span class="pay-bank-label">Amount</span>
+        <span class="pay-bank-value" style="color:#3b82f6;">20 SR</span>
+      </div>
+      <div class="pay-qr-area">
+    <img src="2.png" alt="QR Code" class="pay-qr-image">
+</div>
+    </div>
+    <button class="pay-whatsapp-btn" id="payWhatsappBtn" onclick="handlePaidAndDownload()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      I've Paid — Send Screenshot on WhatsApp
+    </button>
+    <div class="pay-note">After clicking, WhatsApp will open. Send your payment screenshot to confirm. Your resume will be saved and shared with you shortly.</div>
+  </div>
+</div>
+
+
+
+<!-- ===== ADMIN ===== -->
+<button id="adminTrigger" title="" onclick="openAdminLogin()"></button>
+<input type="file" id="adminJsonInput" accept=".json">
+<button id="adminLoadBtn" onclick="document.getElementById('adminJsonInput').click()">📂 Load User Data</button>
+<div id="adminLoginModal">
+  <div class="admin-box">
+    <div class="admin-title">🔐 Admin Access</div>
+    <input class="admin-input" type="text" id="adminUsername" placeholder="Username" autocomplete="off">
+    <input class="admin-input" type="password" id="adminPassword" placeholder="Password" autocomplete="off">
+    <button class="admin-login-btn" onclick="doAdminLogin()">Login</button>
+    <div class="admin-error" id="adminError">Invalid username or password</div>
+  </div>
+</div>
+
+  <script>
+    let skills = [];
+    let experiences = [];
+    let educations = [];
+    let languages = [];
+
+    // 10 beautiful sidebar color themes (gradients & solids)
+    const sidebarThemes = [
+      { name: "Deep Blue", value: "linear-gradient(150deg, #1e3a5f 0%, #244b74 100%)" },
+      { name: "Forest Green", value: "linear-gradient(150deg, #1e5f3a 0%, #24744b 100%)" },
+      { name: "Royal Purple", value: "linear-gradient(150deg, #4a1e5f 0%, #6b2474 100%)" },
+      { name: "Sunset Orange", value: "linear-gradient(150deg, #b85c1a 0%, #e07a2c 100%)" },
+      { name: "Teal Wave", value: "linear-gradient(150deg, #1e5f5f 0%, #247474 100%)" },
+      { name: "Crimson Red", value: "linear-gradient(150deg, #8b1e1e 0%, #b82c2c 100%)" },
+      { name: "Slate Gray", value: "linear-gradient(150deg, #2c3e50 0%, #3e5a6f 100%)" },
+      { name: "Midnight Black", value: "linear-gradient(150deg, #1a1a2e 0%, #252540 100%)" },
+      { name: "Olive Earth", value: "linear-gradient(150deg, #5e5a2e 0%, #73783a 100%)" },
+      { name: "Ocean Breeze", value: "linear-gradient(150deg, #0f4c5f 0%, #2c6e7e 100%)" }
+    ];
+
+    let currentThemeIndex = 0;
+    let currentLayout = 'normal'; // 'normal' | 'reversed'
+
+    let typography = {
+      fontFamily: "'Inter', sans-serif",
+      sizeName: 24,
+      sizeSidebarHead: 15,
+      sizeSidebarBody: 13,
+      sizeMainHead: 15,
+      sizeSummary: 14,
+      sizeExpTitle: 15,
+      sizeExpCompany: 14,
+      sizeExpBullets: 13
+    };
+
+    function applyTypography() {
+      const resume = document.getElementById('resumePreview');
+      if (resume) {
+        resume.style.setProperty('--resume-font-family', typography.fontFamily);
+        resume.style.setProperty('--font-size-name', typography.sizeName + 'px');
+        resume.style.setProperty('--font-size-sidebar-head', typography.sizeSidebarHead + 'px');
+        resume.style.setProperty('--font-size-sidebar-body', typography.sizeSidebarBody + 'px');
+        resume.style.setProperty('--font-size-main-head', typography.sizeMainHead + 'px');
+        resume.style.setProperty('--font-size-summary', typography.sizeSummary + 'px');
+        resume.style.setProperty('--font-size-exp-title', typography.sizeExpTitle + 'px');
+        resume.style.setProperty('--font-size-exp-company', typography.sizeExpCompany + 'px');
+        resume.style.setProperty('--font-size-exp-bullets', typography.sizeExpBullets + 'px');
+      }
+
+      const nameVal = document.getElementById('val-name'); if (nameVal) nameVal.innerText = typography.sizeName + 'px';
+      const sbHeadVal = document.getElementById('val-sb-head'); if (sbHeadVal) sbHeadVal.innerText = typography.sizeSidebarHead + 'px';
+      const sbBodyVal = document.getElementById('val-sb-body'); if (sbBodyVal) sbBodyVal.innerText = typography.sizeSidebarBody + 'px';
+      const mainHeadVal = document.getElementById('val-main-head'); if (mainHeadVal) mainHeadVal.innerText = typography.sizeMainHead + 'px';
+      const summaryVal = document.getElementById('val-summary'); if (summaryVal) summaryVal.innerText = typography.sizeSummary + 'px';
+      const expTitleVal = document.getElementById('val-exp-title'); if (expTitleVal) expTitleVal.innerText = typography.sizeExpTitle + 'px';
+      const expCompanyVal = document.getElementById('val-exp-company'); if (expCompanyVal) expCompanyVal.innerText = typography.sizeExpCompany + 'px';
+      const expBulletsVal = document.getElementById('val-exp-bullets'); if (expBulletsVal) expBulletsVal.innerText = typography.sizeExpBullets + 'px';
+
+      const selectEl = document.getElementById('fontStyleSelect'); if (selectEl) selectEl.value = typography.fontFamily;
+      const inputs = [
+        { id: 'size-name', val: typography.sizeName },
+        { id: 'size-sb-head', val: typography.sizeSidebarHead },
+        { id: 'size-sb-body', val: typography.sizeSidebarBody },
+        { id: 'size-main-head', val: typography.sizeMainHead },
+        { id: 'size-summary', val: typography.sizeSummary },
+        { id: 'size-exp-title', val: typography.sizeExpTitle },
+        { id: 'size-exp-company', val: typography.sizeExpCompany },
+        { id: 'size-exp-bullets', val: typography.sizeExpBullets }
+      ];
+      inputs.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el) el.value = item.val;
+      });
+    }
+
+    function initTypographyListeners() {
+      document.getElementById('fontStyleSelect').addEventListener('change', (e) => {
+        typography.fontFamily = e.target.value;
+        applyTypography();
+        saveData();
+      });
+
+      const inputs = [
+        { id: 'size-name', key: 'sizeName' },
+        { id: 'size-sb-head', key: 'sizeSidebarHead' },
+        { id: 'size-sb-body', key: 'sizeSidebarBody' },
+        { id: 'size-main-head', key: 'sizeMainHead' },
+        { id: 'size-summary', key: 'sizeSummary' },
+        { id: 'size-exp-title', key: 'sizeExpTitle' },
+        { id: 'size-exp-company', key: 'sizeExpCompany' },
+        { id: 'size-exp-bullets', key: 'sizeExpBullets' }
+      ];
+
+      inputs.forEach(item => {
+        document.getElementById(item.id).addEventListener('input', (e) => {
+          typography[item.key] = parseFloat(e.target.value);
+          applyTypography();
+          saveData();
+        });
+      });
+    }
+
+    function setSidebarTheme(index) {
+      currentThemeIndex = index;
+      const theme = sidebarThemes[index];
+      const sidebarElement = document.querySelector('.resume-sidebar-exact');
+      if (sidebarElement) {
+        sidebarElement.style.background = theme.value;
+      }
+      document.querySelectorAll('.color-swatch').forEach((swatch, i) => {
+        if (i === index) swatch.classList.add('active');
+        else swatch.classList.remove('active');
+      });
+      localStorage.setItem('sidebarThemeIndex', index);
+    }
+
+    function setLayout(layout) {
+      currentLayout = layout;
+      const resume = document.getElementById('resumePreview');
+      if (resume) {
+        if (layout === 'reversed') {
+          resume.classList.add('layout-reversed');
+        } else {
+          resume.classList.remove('layout-reversed');
+        }
+      }
+      const normalBtn = document.getElementById('layoutNormalBtn');
+      const reversedBtn = document.getElementById('layoutReversedBtn');
+      if (normalBtn && reversedBtn) {
+        normalBtn.classList.toggle('active', layout === 'normal');
+        reversedBtn.classList.toggle('active', layout === 'reversed');
+      }
+      localStorage.setItem('resumeLayout', layout);
+    }
+
+    function renderColorSwatches() {
+      const container = document.getElementById('colorThemesContainer');
+      container.innerHTML = '';
+      sidebarThemes.forEach((theme, idx) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.background = theme.value;
+        swatch.title = theme.name;
+        swatch.addEventListener('click', () => setSidebarTheme(idx));
+        container.appendChild(swatch);
+      });
+      const savedTheme = localStorage.getItem('sidebarThemeIndex');
+      if (savedTheme !== null) currentThemeIndex = parseInt(savedTheme);
+      setSidebarTheme(currentThemeIndex);
+    }
+
+    function saveData() {
+      const data = {
+        fullName: document.getElementById('fullName').value,
+        phoneField: document.getElementById('phoneField').value,
+        emailField: document.getElementById('emailField').value,
+        locationField: document.getElementById('locationField').value,
+        portfolioField: document.getElementById('portfolioField').value,
+        qrUrl: document.getElementById('qrUrl').value,
+        summaryText: document.getElementById('summaryText').value,
+        skills: skills,
+        experiences: experiences,
+        educations: educations,
+        languages: languages,
+        sidebarThemeIndex: currentThemeIndex,
+        layout: currentLayout,
+        typography: typography
+      };
+      localStorage.setItem('resumeBuilderData', JSON.stringify(data));
+    }
+
+    function loadSavedData() {
+      const saved = localStorage.getItem('resumeBuilderData');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          document.getElementById('fullName').value = data.fullName || '';
+          document.getElementById('phoneField').value = data.phoneField || '';
+          document.getElementById('emailField').value = data.emailField || '';
+          document.getElementById('locationField').value = data.locationField || '';
+          document.getElementById('portfolioField').value = data.portfolioField || '';
+          document.getElementById('qrUrl').value = data.qrUrl || '';
+          document.getElementById('summaryText').value = data.summaryText || '';
+          skills = data.skills || [];
+          experiences = data.experiences || [];
+          educations = data.educations || [];
+          languages = data.languages || [];
+          if (data.sidebarThemeIndex !== undefined) currentThemeIndex = data.sidebarThemeIndex;
+          if (data.layout) currentLayout = data.layout;
+          if (data.typography) typography = data.typography;
+          renderSkillInputs();
+          renderExpInputs();
+          renderEduInputs();
+          renderLangInputs();
+          renderFullResume();
+          setSidebarTheme(currentThemeIndex);
+          setLayout(currentLayout);
+          applyTypography();
+          return true;
+        } catch (e) { }
+      }
+      return false;
+    }
+
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    function escapeHtmlAttr(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+
+    function renderFullResume() {
+      const name = document.getElementById('fullName').value || 'Mozahidul Islam';
+      const phoneRaw = document.getElementById('phoneField').value || '0573008727';
+      const emailRaw = document.getElementById('emailField').value || 'mozahid24k@gmail.com';
+      const location = document.getElementById('locationField').value || 'Riyadh, Saudi Arabia';
+      const portfolio = document.getElementById('portfolioField').value || '';
+      const qrData = document.getElementById('qrUrl').value;
+      const summary = document.getElementById('summaryText').value || '';
+
+      const phoneClean = phoneRaw.replace(/[\s\-\(\)]/g, '');
+      const phoneLink = phoneClean ? `tel:${phoneClean}` : '#';
+      const emailLink = emailRaw ? `mailto:${emailRaw}` : '#';
+
+      let skillsHtml = '';
+      skills.forEach(skill => { if (skill.trim()) skillsHtml += `<li class="skill-bullet">${escapeHtml(skill)}</li>`; });
+
+      let eduHtml = '';
+      educations.forEach(edu => {
+        if (edu.degree || edu.school) {
+          eduHtml += `<div class="edu-item"><div>${escapeHtml(edu.degree)}</div><div>${escapeHtml(edu.school)}</div><div>${escapeHtml(edu.date)}</div></div>`;
+        }
+      });
+
+      let languagesHtml = '';
+      languages.forEach(lang => {
+        if (lang.name) {
+          languagesHtml += `<div class="lang-item"><div class="lang-meta"><span>${escapeHtml(lang.name)}</span></div><div class="progress-bg"><div class="progress-fill" style="width: ${lang.level}%;"></div></div></div>`;
+        }
+      });
+
+      let expHtml = '';
+      experiences.forEach(exp => {
+        let dateRange = '';
+        if (exp.startDate && exp.endDate) dateRange = `${exp.startDate} – ${exp.endDate}`;
+        else if (exp.startDate) dateRange = exp.startDate;
+        else if (exp.endDate) dateRange = exp.endDate;
+        let bulletsHtml = '';
+        if (exp.bullets) {
+          const lines = exp.bullets.split('\n').filter(l => l.trim().length > 0);
+          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${escapeHtml(l.trim())}</li>`).join('') + `</ul>`;
+        }
+        expHtml += `<div class="exp-node"><div class="exp-header"><span class="exp-title">${escapeHtml(exp.title)}</span><span class="exp-date">${escapeHtml(dateRange)}</span></div><div class="exp-company">${escapeHtml(exp.company)}</div>${bulletsHtml}</div>`;
+      });
+
+      let aboutPortfolioHtml = '';
+      if (portfolio && portfolio.trim() !== '') {
+        aboutPortfolioHtml = `<a href="${escapeHtmlAttr(portfolio)}" target="_blank" class="about-icon-link">About <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px; font-size:10px;"></i></a>`;
+      } else {
+        aboutPortfolioHtml = `<span style="margin-right:12px; color:#1e3a5f; font-weight:500;">About</span>`;
+      }
+
+      const mainHtml = `
+      <aside class="resume-sidebar-exact">
+        <div class="profile-qr-area">
+          <div class="qr-box"><img src="${qrData && qrData.trim() !== '' ? escapeHtmlAttr(qrData) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23eeeeee\'/%3E%3Ctext x=\'15\' y=\'55\' fill=\'%23999\' font-size=\'12\'%3EQR Code%3C/text%3E%3C/svg%3E'}" alt="QR"></div>
+          <div class="profile-name-exact">${escapeHtml(name)}</div>
+        </div>
+        <div class="sidebar-head">Contact</div>
+        <div class="contact-line"><a href="${escapeHtmlAttr(phoneLink)}" class="contact-link" style="display:flex; align-items:center; gap:12px; text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>${escapeHtml(phoneRaw)}</span></a></div>
+        <div class="contact-line"><a href="${escapeHtmlAttr(emailLink)}" class="contact-link" style="display:flex; align-items:center; gap:12px; text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>${escapeHtml(emailRaw)}</span></a></div>
+        <div class="contact-line"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>${escapeHtml(location)}</span></div>
+        <div class="sidebar-head">Skills</div>
+        <ul style="list-style:none; padding-left:0;">${skillsHtml}</ul>
+        <div class="sidebar-head">Education</div>
+        ${eduHtml || '<div class="edu-item">—</div>'}
+        <div class="sidebar-head">Languages</div>
+        ${languagesHtml || '<div class="lang-item">—</div>'}
+      </aside>
+      <main class="resume-main-exact">
+        <div class="main-section-title" style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center;">${aboutPortfolioHtml}</div>
+          <div class="main-title-line"></div>
+        </div>
+        <div class="summary-text">${escapeHtml(summary).replace(/\n/g, '<br>') || 'IT Engineer with 3+ years of experience...'}</div>
+        <div class="main-section-title"><span class="main-title-text">Experience</span><div class="main-title-line"></div></div>
+        ${expHtml || '<div>No experience entries added.</div>'}
+      </main>`;
+      document.getElementById('resumePreview').innerHTML = mainHtml;
+      setSidebarTheme(currentThemeIndex);
+      setLayout(currentLayout);
+      applyTypography();
+      saveData();
+      if (typeof scaleMobileResume === 'function') setTimeout(scaleMobileResume, 30);
+    }
+
+    // ================= FIXED PDF DOWNLOAD (WITH CLICKABLE LINKS) =================
+    async function downloadResumeAsPDF() {
+      const originalElement = document.querySelector('.resume-original');
+      if (!originalElement) return;
+
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      const originalText = downloadBtn.innerHTML;
+      downloadBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating PDF...';
+      downloadBtn.disabled = true;
+
+      try {
+        // Clone the resume element to avoid visible side effects
+        const cloneWrapper = document.createElement('div');
+        cloneWrapper.className = 'pdf-clone-wrapper';
+        const clone = originalElement.cloneNode(true);
+        // Remove any transforms and ensure exact dimensions for PDF
+        clone.style.transform = 'none';
+        clone.style.width = '210mm';
+        clone.style.minHeight = 'auto';
+        clone.style.margin = '0';
+        clone.style.boxShadow = 'none';
+        // Force sidebar gradient to be captured correctly
+        const originalSidebar = document.querySelector('.resume-sidebar-exact');
+        const sidebarClone = clone.querySelector('.resume-sidebar-exact');
+        if (sidebarClone && originalSidebar) {
+          sidebarClone.style.background = window.getComputedStyle(originalSidebar).background;
+        }
+        // Apply layout to clone
+        if (currentLayout === 'reversed') clone.classList.add('layout-reversed');
+        else clone.classList.remove('layout-reversed');
+        cloneWrapper.appendChild(clone);
+        document.body.appendChild(cloneWrapper);
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // --- NEW: Extract link coordinates before generating canvas ---
+        const cloneRect = clone.getBoundingClientRect();
+        const cloneWidthPx = cloneRect.width;
+        const links = clone.querySelectorAll('a');
+        const linkData = [];
+        Array.from(links).forEach(link => {
+          const href = link.getAttribute('href'); 
+          if (href && href !== '#' && !href.startsWith('javascript')) {
+            const rect = link.getBoundingClientRect();
+            linkData.push({
+              url: link.href, 
+              x: rect.left - cloneRect.left,
+              y: rect.top - cloneRect.top,
+              w: rect.width,
+              h: rect.height
+            });
+          }
+        });
+        // -------------------------------------------------------------
+
+        // Render at high resolution
+        const canvas = await html2canvas(clone, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        });
+
+        document.body.removeChild(cloneWrapper);
+
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        });
+
+        const pdfWidth = 210; // A4 width in mm
+        const pdfHeight = 297; // A4 height in mm
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Add the first page
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+        // Only add a second page if the remaining content height exceeds 20mm (avoids near-empty pages)
+        let remainingHeight = imgHeight - pdfHeight;
+        let totalPages = 1;
+        if (remainingHeight > 20) {
+          let yOffset = -pdfHeight;
+          while (remainingHeight > 20) {
+            pdf.addPage();
+            totalPages++;
+            pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+            remainingHeight -= pdfHeight;
+            yOffset -= pdfHeight;
+          }
+        }
+
+        // --- NEW: Overlay clickable links on the PDF ---
+        const pxToMm = pdfWidth / cloneWidthPx;
+        linkData.forEach(link => {
+          const linkXMm = link.x * pxToMm;
+          const linkYMm = link.y * pxToMm;
+          const linkWMm = link.w * pxToMm;
+          const linkHMm = link.h * pxToMm;
+
+          // Determine which page the link falls on
+          const pageIndex = Math.floor(linkYMm / pdfHeight);
+          const pageNum = pageIndex + 1;
+          const yOnPage = linkYMm - (pageIndex * pdfHeight);
+
+          // Only add the link if the page actually exists
+          if (pageNum <= totalPages) {
+            pdf.setPage(pageNum);
+            pdf.link(linkXMm, yOnPage, linkWMm, linkHMm, { url: link.url });
+          }
+        });
+        // -----------------------------------------------
+
+        const nameForFile = (document.getElementById('fullName').value || 'Resume').trim().replace(/\s+/g, '_');
+        pdf.save(`${nameForFile}_Resume.pdf`);
+      } catch (error) {
+        console.error('PDF generation error:', error);
+        alert('Failed to generate PDF. Please try again.');
+      } finally {
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
+      }
+    }
+
+    // Download 2 — HR / Print-friendly version (greyscale sidebar, black text)
+    async function downloadResumeAsPDF_HR() {
+      const originalElement = document.querySelector('.resume-original');
+      if (!originalElement) return;
+
+      const btn = document.getElementById('downloadPdfBtn2');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
+      btn.disabled = true;
+
+      try {
+        const cloneWrapper = document.createElement('div');
+        cloneWrapper.className = 'pdf-clone-wrapper';
+        const clone = originalElement.cloneNode(true);
+        clone.classList.add('pdf-friendly');
+        clone.style.transform = 'none';
+        clone.style.width = '210mm';
+        clone.style.minHeight = 'auto';
+        clone.style.margin = '0';
+        clone.style.boxShadow = 'none';
+        if (currentLayout === 'reversed') clone.classList.add('layout-reversed');
+        else clone.classList.remove('layout-reversed');
+        cloneWrapper.appendChild(clone);
+        document.body.appendChild(cloneWrapper);
+
+        // Swap location pin SVG → icons8 address icon in HR version only
+        const locationLine = clone.querySelector('.resume-sidebar-exact .contact-line:not(:has(a)) svg');
+        if (locationLine) {
+          const addressImg = document.createElement('img');
+          addressImg.width = 20;
+          addressImg.height = 20;
+          addressImg.src = 'https://img.icons8.com/fluency-systems-regular/48/address.png';
+          addressImg.alt = 'address';
+          addressImg.style.filter = 'none';
+          locationLine.parentNode.replaceChild(addressImg, locationLine);
+        }
+
+        // Wait for icons8 image to load before capturing
+        await new Promise(resolve => {
+          const img = clone.querySelector('img[alt="address"]');
+          if (img && !img.complete) { img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 1500); }
+          else setTimeout(resolve, 100);
+        });
+
+        const cloneRect = clone.getBoundingClientRect();
+        const cloneWidthPx = cloneRect.width;
+        const links = clone.querySelectorAll('a');
+        const linkData = [];
+        Array.from(links).forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && href !== '#' && !href.startsWith('javascript')) {
+            const rect = link.getBoundingClientRect();
+            linkData.push({ url: link.href, x: rect.left - cloneRect.left, y: rect.top - cloneRect.top, w: rect.width, h: rect.height });
+          }
+        });
+
+        const canvas = await html2canvas(clone, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        });
+
+        document.body.removeChild(cloneWrapper);
+
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+        const pdfWidth = 210;
+        const pdfHeight = 297;
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+        let remainingHeight = imgHeight - pdfHeight;
+        let totalPages = 1;
+        if (remainingHeight > 20) {
+          let yOffset = -pdfHeight;
+          while (remainingHeight > 20) {
+            pdf.addPage(); totalPages++;
+            pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+            remainingHeight -= pdfHeight; yOffset -= pdfHeight;
+          }
+        }
+
+        const pxToMm = pdfWidth / cloneWidthPx;
+        linkData.forEach(link => {
+          const pageIndex = Math.floor((link.y * pxToMm) / pdfHeight);
+          const pageNum = pageIndex + 1;
+          const yOnPage = link.y * pxToMm - (pageIndex * pdfHeight);
+          if (pageNum <= totalPages) {
+            pdf.setPage(pageNum);
+            pdf.link(link.x * pxToMm, yOnPage, link.w * pxToMm, link.h * pxToMm, { url: link.url });
+          }
+        });
+
+        const nameForFile = (document.getElementById('fullName').value || 'Resume').trim().replace(/\s+/g, '_');
+        pdf.save(`${nameForFile}_Resume_Print.pdf`);
+      } catch (error) {
+        console.error('PDF generation error:', error);
+        alert('Failed to generate PDF. Please try again.');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // Editor rendering (identical to original, no changes)
+    function renderSkillInputs() {
+      const container = document.getElementById('skillsContainer');
+      container.innerHTML = '';
+      skills.forEach((skill, idx) => {
+        const div = document.createElement('div');
+        div.className = 'repeater-item';
+        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="skill">✖ Remove</button></div><input type="text" class="skill-input" value="${escapeHtml(skill)}" placeholder="e.g., Network Security" data-idx="${idx}">`;
+        container.appendChild(div);
+      });
+      document.querySelectorAll('.skill-input').forEach(inp => {
+        inp.addEventListener('input', (e) => { const idx = parseInt(e.target.dataset.idx); skills[idx] = e.target.value; renderFullResume(); });
+      });
+      document.querySelectorAll('.btn-remove[data-type="skill"]').forEach(btn => {
+        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); skills.splice(idx, 1); renderSkillInputs(); renderFullResume(); });
+      });
+    }
+    function renderExpInputs() {
+      const container = document.getElementById('expContainer');
+      container.innerHTML = '';
+      experiences.forEach((exp, idx) => {
+        const div = document.createElement('div');
+        div.className = 'repeater-item';
+        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="exp">✖ Remove</button></div>
+        <div class="form-row"><div class="form-group"><label>Title</label><input class="exp-title-inp" value="${escapeHtml(exp.title)}" data-idx="${idx}" data-field="title"></div></div>
+        <div class="form-row"><div class="form-group"><label>Company</label><input class="exp-company-inp" value="${escapeHtml(exp.company)}" data-idx="${idx}" data-field="company"></div></div>
+        <div class="form-row"><div class="form-group"><label>Start Date</label><input class="exp-start-inp" value="${escapeHtml(exp.startDate)}" data-idx="${idx}" data-field="startDate"></div>
+        <div class="form-group"><label>End Date</label><input class="exp-end-inp" value="${escapeHtml(exp.endDate)}" data-idx="${idx}" data-field="endDate"></div></div>
+        <div class="form-group"><label>Bullet points (one per line)</label><textarea rows="4" class="exp-bullets-inp" data-idx="${idx}" data-field="bullets">${escapeHtml(exp.bullets)}</textarea></div>`;
+        container.appendChild(div);
+      });
+      attachExpEvents();
+    }
+    function attachExpEvents() {
+      document.querySelectorAll('.exp-title-inp, .exp-company-inp, .exp-start-inp, .exp-end-inp, .exp-bullets-inp').forEach(el => {
+        el.removeEventListener('input', expHandler);
+        el.addEventListener('input', expHandler);
+      });
+      document.querySelectorAll('.btn-remove[data-type="exp"]').forEach(btn => {
+        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); experiences.splice(idx, 1); renderExpInputs(); renderFullResume(); });
+      });
+    }
+    function expHandler(e) {
+      const idx = parseInt(e.target.dataset.idx);
+      const field = e.target.dataset.field;
+      if (!isNaN(idx) && experiences[idx]) { experiences[idx][field] = e.target.value; renderFullResume(); }
+    }
+    function renderEduInputs() {
+      const container = document.getElementById('eduContainer');
+      container.innerHTML = '';
+      educations.forEach((edu, idx) => {
+        const div = document.createElement('div');
+        div.className = 'repeater-item';
+        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="edu">✖ Remove</button></div>
+        <div class="form-row"><div class="form-group"><label>Degree</label><input class="edu-degree-inp" value="${escapeHtml(edu.degree)}" data-idx="${idx}" data-field="degree"></div></div>
+        <div class="form-group"><label>School</label><input class="edu-school-inp" value="${escapeHtml(edu.school)}" data-idx="${idx}" data-field="school"></div>
+        <div class="form-group"><label>Date / Year</label><input class="edu-date-inp" value="${escapeHtml(edu.date)}" data-idx="${idx}" data-field="date"></div>`;
+        container.appendChild(div);
+      });
+      attachEduEvents();
+    }
+    function attachEduEvents() {
+      document.querySelectorAll('.edu-degree-inp, .edu-school-inp, .edu-date-inp').forEach(el => {
+        el.removeEventListener('input', eduHandler);
+        el.addEventListener('input', eduHandler);
+      });
+      document.querySelectorAll('.btn-remove[data-type="edu"]').forEach(btn => {
+        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); educations.splice(idx, 1); renderEduInputs(); renderFullResume(); });
+      });
+    }
+    function eduHandler(e) {
+      const idx = parseInt(e.target.dataset.idx);
+      const field = e.target.dataset.field;
+      if (educations[idx]) { educations[idx][field] = e.target.value; renderFullResume(); }
+    }
+    function renderLangInputs() {
+      const container = document.getElementById('langContainer');
+      container.innerHTML = '';
+      languages.forEach((lang, idx) => {
+        const div = document.createElement('div');
+        div.className = 'repeater-item';
+        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="lang">✖ Remove</button></div>
+        <div class="form-group"><label>Language</label><input class="lang-name-inp" value="${escapeHtml(lang.name)}" data-idx="${idx}" data-field="name"></div>
+        <div class="form-group"><label>Proficiency %</label><input type="range" min="0" max="100" class="lang-level-slider" value="${lang.level}" data-idx="${idx}" data-field="level"><span class="lang-level-val">${lang.level}%</span></div>`;
+        container.appendChild(div);
+        const slider = div.querySelector('.lang-level-slider');
+        const valSpan = div.querySelector('.lang-level-val');
+        slider.addEventListener('input', (e) => { const idx2 = parseInt(e.target.dataset.idx); languages[idx2].level = parseInt(e.target.value); valSpan.innerText = languages[idx2].level + '%'; renderFullResume(); });
+        div.querySelector('.lang-name-inp').addEventListener('input', (e) => { const idx2 = parseInt(e.target.dataset.idx); languages[idx2].name = e.target.value; renderFullResume(); });
+      });
+      document.querySelectorAll('.btn-remove[data-type="lang"]').forEach(btn => {
+        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); languages.splice(idx, 1); renderLangInputs(); renderFullResume(); });
+      });
+    }
+
+    function loadOriginalResume() {
+      document.getElementById('fullName').value = 'Mozahidul Islam';
+      document.getElementById('phoneField').value = '0573008727';
+      document.getElementById('emailField').value = 'mozahid24k@gmail.com';
+      document.getElementById('locationField').value = 'Riyadh, Saudi Arabia';
+      document.getElementById('portfolioField').value = 'https://mozahid24k.github.io/3d-portfolio/';
+      document.getElementById('qrUrl').value = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIcAAAB8CAYAAABBsqPQAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAKM0lEQVR4nO2dW5PcKAyF+///xDzmNS+531Ozxe6wpT6NjnQAu6czUpUq1QGEkD/bIGzP5ekE+fXr19Plcvlfrfz588ctU8XaUTVrp/nr1W3jtPLz58/0uGd9PVJO6engKDhcKTj+Aji+fPmyFOCuLShWFDgUZQcqCmIWDpTv37+ffqCiE2jHMWv6+/fva7v2R8FxW4ZScBQcBccTBEdzKqtnwNHrd22DsToabNcIJM9OE1v27t07Ohb0iWm2LfrL4MAYKcdNgkORM+D48OHDVdsRELNXmVmdHcuPHz9ojLJ94leyevn07fdwKjoG/BUfB4fpbcLwgOJSBW8Hg4wFnPil1mT/KhJTlOVAKjoLDlYKj4HCl4DgYDmZXgWN23FGftqzmHM9ScNzWLTiepeC4rfvwcByVIbXZv1GZtWtllNHLZkwjODCb6ikLbotfNiv79etX6jsbC/Ohx+nwDOms7sxzzNbFoEVweO2UqwFu2a/YZeNW7CpacCSk4Hi2a38UHHGwXy0cR8nKk2C2LEqfs7bK9j6zyfIcyoQ5mpAqMTpKCo6Cw5WCo+Bw5dKcPFqjB2TYcpGVRXDM2kWbdixv3ry5OchdEZyj4GjL4DOO2wXPoDN0l0RwzMqucR4Fx4lacKAUHAk4vn37llbbrl16bVlL6WYPonIraHDYfiJbZ6iFgGUj2y3IliEcamp+eD4vHdM8ZbtspeY7IFh5sdmYyO1nFtb4i0YHZdQWKfHieL+w4pgVHwTGWVwlHywQ3H6327PBRcLQD1vppscC+mbb6d4PD/mBb9itpbjYxa/feG6c22GWK8DbpAONu6GjeE72LcsQVSXn/hcEhqTX8muHAR/q8PmZXDqtw4KS/K+7nFByvEA5MsJ0Ox2ipOPtQjmcnet0wWsoqcHhLxREczH/mg6efPn26sRX1yXyxcET+WTj6nGVG6QyFDV6ZJN3rMUErFsoIDsUHTz9+/ChPJLMxYnYRDsUHlIJDlIKjFxYcQx+yb9HfCw47fzoMDsX5XXUVUbbsrY7gmPWBST8wPcdhdzyjuQwrw7YtDn1MOEFV3ieefhKs4NCFxWE3HL0MX00oOBJwtGV619GznkfD8f79+ysfVDjaMxxe27vD8W9loDe7lMW22aCgtMBE/cz4y/wbCVv+eWNTl+lRf1YYHOry9SomLAiMspUJaTYo6AM+JrjT3ywcs7eKKAmm2EVhcKxIwTFoy+RVwcEuK+2geqpcqjCdi+XMLoOD1R0FmN1WmA/YZ/ZWgT4y31XorFo42oNWkU+RH8afuavBrvx9tLfC4FAmW1ajPIe90q1cDZg0O22SmfE3mp/sumIOtOBAOQuO7BuGBUfC4bPgiJ7n2AXHbKYV27IM9DY4FL1Z9gjBj+Dw6qpweHVH/mVT3gwOPGjKybYiyoSUxWhQt+Bo0vcjlFXFCI7uc9uyLzgGnRYc+q7sihwGR3Y5igciWl6xZTCDA9syOCKfvQBGcChLWSzrB2AEh7L8j9p5Y2uSjX1TWvcmSo7gDJmdFcpsemVCqkgWjugKuXJbyU6gR4/+4ZNgM3ZlzQa34Lgd218Ph3I5GwUiUxdFgcNK35Gcyf7ZAzm6dczCsXp7sWinners2qfPIziy8cSygfqBYDSzTlYnpN5glKsX2hnVtVvo+JmIDBzt6sC24RWxdtG3pvbTDwyOaMuexajgGJQxZXCglowiy6KcgxVlH4bJCEJPWZ5jJWfDfI/yHKztjdqKBUfBUXAUHMO2DwFHVpQDvutAMDlrQqp89klJ99PPPhUcBcdVXfuj4Cg4ruraH+zb55EqcOBDNlnpy62u0TfA7TJNzdKyLKIXg9E4canojRvLWZmS5WzHgj3sMw3HrN7rj/GwM1VJBjFZmZDaspW9lZ0xKjieCo6Co+A4Do6jZAWOFUgV2XFS3MsfK9GEVPJhuqUgBUfB4UrB8Zhw/AMx4353caPgsAAAAABJRU5ErkJggg==';
+      document.getElementById('summaryText').value = 'IT Engineer with 3+ years of experience in technical support and IT operations at Reben Petroleum, KSA. Skilled in fuel management systems, IT automation, networking, POS systems, remote troubleshooting, and infrastructure maintenance. Self-motivated and adaptable, with a strong focus on operational efficiency and technical excellence.';
+      skills = ['IT Support & Tools', 'Operating Systems', 'System Administration', 'Email & Communication', 'Remote Support', 'Scripting & Firebase', 'IT Compliance & Documentation', 'End-User Support & Training'];
+      experiences = [
+        { title: 'IT Executive', company: 'Masaken Al-Majdal Petroleum Services (REBEN) – Riyadh', startDate: 'Jul 2024', endDate: 'Present', bullets: 'Managing IT operations across 65+ fuel stations, including hardware, software, and automation systems.\nProvide technical support for Fuel Management Systems (FMS).\nConfigured and maintained CCTV and security systems.\nInstallation and manage networks, POS Devices, operating systems.\nCoordinated with vendors (ALITCO, GVR, Fusion) for troubleshooting and issue resolution.\nFamiliar with FortiGate firewall and Server 2019.\nConduct quarterly station inspections and managed Civil Defense Equipment.\nProvide remote support through various communication channels, ensuring minimal downtime.' },
+        { title: 'Desktop Support Engineer', company: 'Tech Mahindra – Noida', startDate: '08/2023', endDate: '07/2024', bullets: 'PC Assembling Disassembling & Printer - Scanner Setup\nWindows 7-11 Installation & Troubleshooting\nIP Configuration (IPv4 - TCP/IP), DHCP, DNS, LAN/Wi-Fi Troubleshooting\nProvided technical support for Windows OS, hardware, and approved software.\nManaged patches and performed remote troubleshooting using LogMeIn\nHandled Citrix Virtual Apps support, including profile management and login issues.\nMonitored system health and performed scheduled maintenance.\nManaged user accounts, VPNs, backups & IP Phones.' },
+        { title: 'Networking Intern', company: 'Jetking Tech Lab', startDate: '', endDate: '2023', bullets: 'Hands-on PC assembly, Windows deployments, IPv4/DHCP/DNS configuration\nHardware troubleshooting and lab equipment maintenance' }
+      ];
+      educations = [
+        { degree: 'Master Diploma in Cloud Computing', school: 'Jetking, New Delhi', date: 'Mar – Sep 2022' },
+        { degree: 'B.Tech', school: 'Mansarovar Global University, Bhopal', date: '05/2019 – 04/2023' }
+      ];
+      languages = [
+        { name: 'Arabic', level: 55 },
+        { name: 'English', level: 80 },
+        { name: 'Hindi / Urdu', level: 95 }
+      ];
+      typography = {
+        fontFamily: "'Inter', sans-serif",
+        sizeName: 24,
+        sizeSidebarHead: 15,
+        sizeSidebarBody: 13,
+        sizeMainHead: 15,
+        sizeSummary: 14,
+        sizeExpTitle: 15,
+        sizeExpCompany: 14,
+        sizeExpBullets: 13
+      };
+      renderSkillInputs();
+      renderExpInputs();
+      renderEduInputs();
+      renderLangInputs();
+      renderFullResume();
+      applyTypography();
+    }
+
+    // Initialize
+    renderColorSwatches();
+    initTypographyListeners();
+    document.getElementById('addSkillBtn').onclick = () => { skills.push(''); renderSkillInputs(); renderFullResume(); };
+    document.getElementById('addExpBtn').onclick = () => { experiences.push({ title: '', company: '', startDate: '', endDate: '', bullets: '' }); renderExpInputs(); renderFullResume(); };
+    document.getElementById('addEduBtn').onclick = () => { educations.push({ degree: '', school: '', date: '' }); renderEduInputs(); renderFullResume(); };
+    document.getElementById('addLangBtn').onclick = () => { languages.push({ name: '', level: 50 }); renderLangInputs(); renderFullResume(); };
+    document.getElementById('loadOriginalBtn').onclick = () => { loadOriginalResume(); };
+    // ===== PAYMENT SYSTEM =====
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzV7FJ7BWHItN9O5y1sB3DOfdGITYaVUAodXw2FDv4UCeNmilE2030OkVPpQqH1wYHQqw/exec';
+    const WHATSAPP_NUMBER   = '919471941594';
+    let pendingDownloadType = null;
+    let isAdmin = false;
+
+    function openPaymentModal(type) {
+      pendingDownloadType = type;
+      document.getElementById('paymentModal').classList.add('active');
+      document.getElementById('upiPanel').classList.remove('active');
+      document.getElementById('bankPanel').classList.remove('active');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.remove('active');
+      pendingDownloadType = null;
+    }
+
+    document.getElementById('paymentModal').addEventListener('click', function(e) {
+      if (e.target === this) closePaymentModal();
+    });
+
+    function togglePanel(panelId, btn) {
+      ['upiPanel','bankPanel'].forEach(id => document.getElementById(id).classList.remove('active'));
+      document.querySelectorAll('.pay-btn').forEach(b => b.style.opacity = '0.7');
+      document.getElementById(panelId).classList.add('active');
+      btn.style.opacity = '1';
+    }
+
+    function copyText(text, btnId) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById(btnId);
+        if (btn) { btn.textContent = '✓ Copied'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000); }
+      }).catch(() => {
+        const el = document.createElement('textarea');
+        el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+        const btn = document.getElementById(btnId);
+        if (btn) { btn.textContent = '✓ Copied'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000); }
+      });
+    }
+
+    async function handlePaidAndDownload() {
+      const btn = document.getElementById('payWhatsappBtn');
+      const originalBtnHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Saving data...';
+
+      try {
+        // Collect all resume data as JSON
+        const userName = (document.getElementById('fullName').value || 'Resume').trim().replace(/\s+/g, '_');
+        const resumeData = {
+          fullName:      document.getElementById('fullName').value,
+          phoneField:    document.getElementById('phoneField').value,
+          emailField:    document.getElementById('emailField').value,
+          locationField: document.getElementById('locationField').value,
+          portfolioField:document.getElementById('portfolioField').value,
+          qrUrl:         document.getElementById('qrUrl').value,
+          summaryText:   document.getElementById('summaryText').value,
+          skills, experiences, educations, languages,
+          currentThemeIndex, currentLayout, typography,
+          downloadType: pendingDownloadType,
+          submittedAt: new Date().toISOString()
+        };
+
+        const jsonString  = JSON.stringify(resumeData, null, 2);
+        const jsonBase64  = btoa(unescape(encodeURIComponent(jsonString)));
+        const fileName    = userName + '_ResumeData.json';
+
+        // Step 1 — Open WhatsApp IMMEDIATELY (no waiting)
+        const name  = document.getElementById('fullName').value || '';
+        const phone = document.getElementById('phoneField').value || '';
+        const msg   = `Hi Mozahid! 👋\n\nI have made the payment of ₹100 for Resume Download.\n\nName: ${name}\nPhone: ${phone}\n\nPlease find my payment screenshot attached. Kindly share my resume PDF. 🙏`;
+        window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+
+        closePaymentModal();
+
+        // Step 2 — Upload to Drive in background (user doesn't wait)
+        btn.innerHTML = '☁️ Saving to Drive...';
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ fileName, fileData: jsonBase64, fileType: 'application/json' })
+        })
+        .then(r => r.json())
+        .then(result => {
+          if (result.success) console.log('✅ Saved to Drive:', result.fileUrl);
+          else console.warn('Drive error:', result.error);
+        })
+        .catch(err => console.warn('Drive upload failed:', err));
+
+      } catch(err) {
+        console.error('Payment flow error:', err);
+        alert('Something went wrong. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+      }
+    }
+
+    // ===== ADMIN SYSTEM =====
+    const ADMIN_USER = 'mozahid';
+    const ADMIN_PASS = 'moz@2024';
+
+    function openAdminLogin() {
+      document.getElementById('adminLoginModal').classList.add('active');
+      document.getElementById('adminUsername').value = '';
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminError').style.display = 'none';
+      setTimeout(() => document.getElementById('adminUsername').focus(), 100);
+    }
+
+    function doAdminLogin() {
+      const u = document.getElementById('adminUsername').value.trim();
+      const p = document.getElementById('adminPassword').value;
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        isAdmin = true;
+        document.getElementById('adminLoginModal').classList.remove('active');
+        document.getElementById('adminTrigger').classList.add('logged-in');
+        document.getElementById('adminLoadBtn').style.display = 'block';
+        alert('✅ Admin mode activated!');
+      } else {
+        document.getElementById('adminError').style.display = 'block';
+      }
+    }
+
+    document.getElementById('adminPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doAdminLogin();
+    });
+
+    document.getElementById('adminLoginModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('active');
+    });
+
+    document.getElementById('adminJsonInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data.fullName       !== undefined) document.getElementById('fullName').value       = data.fullName;
+          if (data.phoneField     !== undefined) document.getElementById('phoneField').value     = data.phoneField;
+          if (data.emailField     !== undefined) document.getElementById('emailField').value     = data.emailField;
+          if (data.locationField  !== undefined) document.getElementById('locationField').value  = data.locationField;
+          if (data.portfolioField !== undefined) document.getElementById('portfolioField').value = data.portfolioField;
+          if (data.qrUrl          !== undefined) document.getElementById('qrUrl').value          = data.qrUrl;
+          if (data.summaryText    !== undefined) document.getElementById('summaryText').value    = data.summaryText;
+          if (Array.isArray(data.skills))      { skills      = data.skills;      renderSkillInputs(); }
+          if (Array.isArray(data.experiences)) { experiences = data.experiences; renderExpInputs(); }
+          if (Array.isArray(data.educations))  { educations  = data.educations;  renderEduInputs(); }
+          if (Array.isArray(data.languages))   { languages   = data.languages;   renderLangInputs(); }
+          if (data.currentThemeIndex !== undefined) setSidebarTheme(data.currentThemeIndex);
+          if (data.currentLayout)   setLayout(data.currentLayout);
+          if (data.typography)      { typography = { ...typography, ...data.typography }; applyTypography(); }
+          renderFullResume();
+          alert('✅ Resume loaded! Click Download 1 to generate PDF.');
+        } catch(err) {
+          alert('❌ Invalid JSON file.');
+        }
+      };
+      reader.readAsText(file);
+      this.value = '';
+    });
+
+    // Wire download buttons — admin bypasses payment
+    document.getElementById('downloadPdfBtn').onclick  = () => { isAdmin ? downloadResumeAsPDF()    : openPaymentModal('normal'); };
+    document.getElementById('downloadPdfBtn2').onclick = () => { isAdmin ? downloadResumeAsPDF_HR() : openPaymentModal('hr'); };
+    document.getElementById('qrFileInput').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      // Validate it's an image
+      if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        document.getElementById('qrUrl').value = event.target.result;
+        saveData();
+        renderFullResume();
+      };
+      reader.onerror = function() { alert('Failed to read file. Please try again.'); };
+      reader.readAsDataURL(file);
+    });
+    ['fullName', 'phoneField', 'emailField', 'locationField', 'portfolioField', 'summaryText'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => renderFullResume());
+    });
+    // ===== CHAR COUNT FOR SUMMARY =====
+    function updateCharCount() {
+      const txt = document.getElementById('summaryText').value;
+      const len = txt.length;
+      const max = 600;
+      const fill = document.getElementById('charFill');
+      const label = document.getElementById('charLabel');
+      if (!fill || !label) return;
+      const pct = Math.min((len / max) * 100, 100);
+      fill.style.width = pct + '%';
+      label.textContent = len + ' characters';
+      label.className = 'char-count-label';
+      if (len >= 300 && len <= 500) {
+        fill.style.background = '#22c55e';
+        label.classList.add('good');
+      } else if (len > 500 && len <= 600) {
+        fill.style.background = '#f59e0b';
+        label.classList.add('warn');
+      } else if (len > 600) {
+        fill.style.background = '#ef4444';
+        label.classList.add('over');
+      } else {
+        fill.style.background = '#ef4444';
+      }
+    }
+    document.getElementById('summaryText').addEventListener('input', updateCharCount);
+
+    // ===== PREVIEW UPDATE DOT =====
+    let _dotClearTimer = null;
+    function showPreviewDot() {
+      if (window.innerWidth > 768) return;
+      const dot = document.getElementById('previewUpdateDot');
+      if (dot) dot.style.display = 'block';
+      clearTimeout(_dotClearTimer);
+    }
+    function hidePreviewDot() {
+      const dot = document.getElementById('previewUpdateDot');
+      if (dot) dot.style.display = 'none';
+    }
+
+    // ===== JSON EXPORT =====
+    function getCurrentResumeData() {
+      return {
+        fullName: document.getElementById('fullName').value,
+        phoneField: document.getElementById('phoneField').value,
+        emailField: document.getElementById('emailField').value,
+        locationField: document.getElementById('locationField').value,
+        portfolioField: document.getElementById('portfolioField').value,
+        qrUrl: document.getElementById('qrUrl').value,
+        summaryText: document.getElementById('summaryText').value,
+        skills, experiences, educations, languages,
+        sidebarThemeIndex: currentThemeIndex,
+        layout: currentLayout,
+        typography
+      };
+    }
+
+    function exportResumeJSON() {
+      const data = getCurrentResumeData();
+      const nameForFile = (data.fullName || 'Resume').trim().replace(/\s+/g, '_');
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${nameForFile}_Resume_Backup.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showJsonToast('✅ Backup saved! Keep this file safe.', 'success');
+    }
+
+    function showJsonToast(msg, type) {
+      const toast = document.getElementById('jsonToast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.className = 'json-toast ' + type;
+      toast.style.display = 'block';
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+
+    function importResumeJSON(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          document.getElementById('fullName').value       = data.fullName      || '';
+          document.getElementById('phoneField').value     = data.phoneField    || '';
+          document.getElementById('emailField').value     = data.emailField    || '';
+          document.getElementById('locationField').value  = data.locationField || '';
+          document.getElementById('portfolioField').value = data.portfolioField|| '';
+          document.getElementById('qrUrl').value          = data.qrUrl         || '';
+          document.getElementById('summaryText').value    = data.summaryText   || '';
+          skills      = data.skills      || [];
+          experiences = data.experiences || [];
+          educations  = data.educations  || [];
+          languages   = data.languages   || [];
+          if (data.sidebarThemeIndex !== undefined) currentThemeIndex = data.sidebarThemeIndex;
+          if (data.layout) currentLayout = data.layout;
+          if (data.typography) typography = { ...typography, ...data.typography };
+          renderSkillInputs();
+          renderExpInputs();
+          renderEduInputs();
+          renderLangInputs();
+          renderFullResume();
+          setSidebarTheme(currentThemeIndex);
+          setLayout(currentLayout);
+          applyTypography();
+          updateCharCount();
+          showJsonToast('✅ Resume loaded from backup!', 'success');
+        } catch(err) {
+          showJsonToast('❌ Invalid file. Please use a valid backup JSON.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    document.getElementById('exportJsonBtn').addEventListener('click', exportResumeJSON);
+    document.getElementById('importJsonBtn').addEventListener('click', () => {
+      document.getElementById('importJsonInput').value = '';
+      document.getElementById('importJsonInput').click();
+    });
+    document.getElementById('importJsonInput').addEventListener('change', function(e) {
+      if (e.target.files[0]) importResumeJSON(e.target.files[0]);
+    });
+
+    // ===== PATCH renderFullResume to trigger dot + char count =====
+    const _origRenderFull = renderFullResume;
+    renderFullResume = function() {
+      _origRenderFull();
+      showPreviewDot();
+      updateCharCount();
+    };
+
+    // ===== DYNAMIC MOBILE RESUME SCALING =====
+    function scaleMobileResume() {
+      const resume = document.getElementById('resumePreview');
+      const wrapper = document.getElementById('resumeScaleWrapper');
+      if (!resume || !wrapper) return;
+      if (window.innerWidth <= 768) {
+        const panelWidth = document.getElementById('previewPanel').clientWidth - 24; // 12px padding each side
+        const resumeNaturalWidth = resume.scrollWidth || 794; // 210mm ≈ 794px
+        const actualWidth = 794;
+        const scale = Math.min(panelWidth / actualWidth, 1);
+        resume.style.transform = `scale(${scale})`;
+        resume.style.transformOrigin = 'top left';
+        resume.style.margin = '0';
+        const scaledHeight = resume.scrollHeight * scale;
+        wrapper.style.width = (actualWidth * scale) + 'px';
+        wrapper.style.height = scaledHeight + 'px';
+        wrapper.style.overflow = 'hidden';
+      } else {
+        resume.style.transform = '';
+        resume.style.transformOrigin = '';
+        wrapper.style.width = '';
+        wrapper.style.height = '';
+        wrapper.style.overflow = '';
+      }
+    }
+
+    // Run after content renders
+    const origRenderFullResume = renderFullResume;
+    // Patch renderFullResume to also scale after each render
+    window.addEventListener('load', () => {
+      scaleMobileResume();
+    });
+    window.addEventListener('resize', () => {
+      scaleMobileResume();
+    });
+
+    // Hook into switchTab to scale when preview tab is shown
+    const _origSwitchTab = switchTab;
+    // Override after definition — already handled inside switchTab above
+
+    // ===== END DYNAMIC SCALING =====
+
+    // Auto load — if saved data has no name, load original sample resume
+    const _hasSaved = loadSavedData();
+    if (!_hasSaved) {
+      loadOriginalResume();
+    } else {
+      // If saved data exists but name is empty, also load original
+      const _name = document.getElementById('fullName').value;
+      if (!_name || _name.trim() === '') loadOriginalResume();
+    }
+    updateCharCount();
+
+    // ===== MOBILE TAB SWITCHING =====
+    function switchTab(tab) {
+      const editorPanel = document.getElementById('editorPanel');
+      const previewPanel = document.getElementById('previewPanel');
+      const editorBtn = document.getElementById('tabEditorBtn');
+      const previewBtn = document.getElementById('tabPreviewBtn');
+      if (!editorPanel || !previewPanel) return;
+      if (tab === 'editor') {
+        editorPanel.classList.remove('tab-hidden');
+        previewPanel.classList.add('tab-hidden');
+        editorBtn.classList.add('active');
+        previewBtn.classList.remove('active');
+      } else {
+        previewPanel.classList.remove('tab-hidden');
+        editorPanel.classList.add('tab-hidden');
+        previewBtn.classList.add('active');
+        editorBtn.classList.remove('active');
+        // Re-apply typography & theme when switching to preview (needed after edits)
+        applyTypography();
+        setSidebarTheme(currentThemeIndex);
+        hidePreviewDot();
+        setTimeout(scaleMobileResume, 50);
+      }
+    }
+
+    // Only activate tab mode on mobile
+    function initMobileTabs() {
+      if (window.innerWidth <= 768) {
+        switchTab('editor');
+      }
+    }
+    initMobileTabs();
+    window.addEventListener('resize', () => {
+      const editorPanel = document.getElementById('editorPanel');
+      const previewPanel = document.getElementById('previewPanel');
+      if (window.innerWidth > 768) {
+        // Restore desktop layout — show both panels
+        editorPanel.classList.remove('tab-hidden');
+        previewPanel.classList.remove('tab-hidden');
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>
