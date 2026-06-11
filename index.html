@@ -713,7 +713,120 @@
       .btn-json { min-width: 0; width: 100%; }
     }
 
-    /* Temporary clone styles for PDF generation (no visual effect on main UI) */
+    /* ===== DYNAMIC SIDEBAR SECTION EDITOR ===== */
+  .sidebar-section-item {
+    background: #0c0c10;
+    border-radius: 16px;
+    padding: 0;
+    margin-bottom: 14px;
+    border: 1px solid #26262c;
+    overflow: hidden;
+  }
+  .sidebar-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    background: #111114;
+    border-bottom: 1px solid #26262c;
+  }
+  .sidebar-section-header:hover { background: #18181c; }
+  .sidebar-section-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(239,68,68,0.12);
+    color: #ef4444;
+    flex-shrink: 0;
+  }
+  .sidebar-section-title-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #3a3a44;
+    border-radius: 0;
+    padding: 2px 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+  }
+  .sidebar-section-title-input:focus {
+    outline: none;
+    border-bottom-color: #ef4444;
+    box-shadow: none;
+  }
+  .sidebar-section-controls {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .btn-section-ctrl {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #3a3a44;
+    border-radius: 6px;
+    color: #aaa;
+    font-size: 11px;
+    padding: 3px 7px;
+    cursor: pointer;
+    line-height: 1;
+    transition: 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-section-ctrl:hover { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+  .btn-section-ctrl.danger:hover { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #ef4444; }
+  .sidebar-section-body {
+    padding: 14px;
+    display: block;
+  }
+  .sidebar-section-body.collapsed { display: none; }
+  .section-items-container { margin-bottom: 8px; }
+  .section-item-row {
+    background: #16161c;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #2a2a34;
+  }
+  .btn-add-section-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed #3a3a44;
+    border-radius: 40px;
+    padding: 10px 16px;
+    color: #ccc;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-add-section-type:hover { background: rgba(239,68,68,0.1); border-color: #ef4444; color: #ef4444; }
+  .section-type-select {
+    background: #1c1c22;
+    border: 1px solid #2e2e38;
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: white;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .section-type-select:focus { outline: none; border-color: #ef4444; }
+  /* ===== END DYNAMIC SIDEBAR SECTION EDITOR ===== */
+
+  /* Temporary clone styles for PDF generation (no visual effect on main UI) */
     .pdf-clone-wrapper {
       position: fixed;
       top: -9999px;
@@ -725,12 +838,15 @@
     }
 
     /* ===== PDF-FRIENDLY (HR / Print version) ===== */
-    .resume-original.pdf-friendly .resume-sidebar-exact {
+    .resume-original.pdf-friendly .resume-sidebar-exact,
+    .resume-original.pdf-friendly .t2-sidebar-bg {
       background: #eef2f5 !important;
       background-image: none !important;
       color: #111 !important;
-      border-right: 1px solid #cfcfcf;
     }
+    .resume-original.pdf-friendly .resume-sidebar-exact { border-right: 1px solid #cfcfcf; }
+    .resume-original.pdf-friendly .t2-sidebar-bg { border-left: 1px solid #cfcfcf; }
+
     .resume-original.pdf-friendly .resume-sidebar-exact .profile-name-exact,
     .resume-original.pdf-friendly .resume-sidebar-exact .sidebar-head,
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-line,
@@ -738,23 +854,36 @@
     .resume-original.pdf-friendly .resume-sidebar-exact .skill-bullet,
     .resume-original.pdf-friendly .resume-sidebar-exact .edu-item,
     .resume-original.pdf-friendly .resume-sidebar-exact .lang-meta,
-    .resume-original.pdf-friendly .resume-sidebar-exact .lang-meta span {
+    .resume-original.pdf-friendly .resume-sidebar-exact .lang-meta span,
+    .resume-original.pdf-friendly .t2-sidebar .sidebar-head,
+    .resume-original.pdf-friendly .t2-skills-label .sidebar-head,
+    .resume-original.pdf-friendly .t2-sidebar .skill-bullet,
+    .resume-original.pdf-friendly .t2-sidebar .edu-item,
+    .resume-original.pdf-friendly .t2-sidebar .edu-item div,
+    .resume-original.pdf-friendly .t2-sidebar .lang-meta span,
+    .resume-original.pdf-friendly .t2-sidebar {
       color: #111 !important;
     }
-    .resume-original.pdf-friendly .resume-sidebar-exact .skill-bullet::before {
+    .resume-original.pdf-friendly .resume-sidebar-exact .skill-bullet::before,
+    .resume-original.pdf-friendly .t2-sidebar .skill-bullet::before {
       color: #111 !important;
     }
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-line img {
       filter: none !important;
     }
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-link svg { stroke: #111 !important; fill: none; }
-    .resume-original.pdf-friendly .progress-bg { background: #d4d4d4; }
-    .resume-original.pdf-friendly .progress-fill { background: #2c3e50; }
+    .resume-original.pdf-friendly .t2-sidebar .sidebar-head,
+    .resume-original.pdf-friendly .t2-skills-label::before { border-color: rgba(0,0,0,0.2) !important; }
+    
+    .resume-original.pdf-friendly .progress-bg,
+    .resume-original.pdf-friendly .t2-sidebar .progress-bg { background: #d4d4d4; }
+    .resume-original.pdf-friendly .progress-fill,
+    .resume-original.pdf-friendly .t2-sidebar .progress-fill { background: #2c3e50; }
     .resume-original.pdf-friendly .main-title-text { color: #0f172a; }
     .resume-original.pdf-friendly .exp-title,
     .resume-original.pdf-friendly .exp-desc-list li { color: #0f172a; }
     .resume-original.pdf-friendly .exp-company { color: #2563eb; }
-    .resume-original.pdf-friendly .qr-box img { filter: grayscale(20%) brightness(0.96); }
+    .resume-original.pdf-friendly .qr-box img { filter: grayscale(20%) brightness(0.96); border: 1px solid #cfcfcf !important; }
 
     /* ===== MOBILE TAB BAR ===== */
     .mobile-tab-bar {
@@ -1099,6 +1228,63 @@
   }
   #adminLoadBtn:hover { background: #16a34a; }
   #adminJsonInput { display: none; }
+
+  /* ===== TEMPLATE 2 — CLASSIC ===== */
+  .resume-original.layout-template2 { flex-direction: column; }
+  .resume-original.layout-template2 > .resume-sidebar-exact,
+  .resume-original.layout-template2 > .resume-main-exact { display: none !important; }
+  .t2-wrap { display: none; width: 100%; flex-direction: column; font-family: var(--resume-font-family,'Inter',sans-serif); background: white; position: relative; }
+  .resume-original.layout-template2 .t2-wrap { display: flex !important; }
+
+  .t2-sidebar-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 30%; z-index: 0; }
+
+  /* TOP ROW - header + photo side by side, naturally same height */
+  .t2-top-row { display: flex; align-items: stretch; position: relative; z-index: 1; }
+  .t2-top-header { flex: 1; text-align: center; padding: 22px 28px 14px; display: flex; flex-direction: column; justify-content: center; gap: 0; }
+  .t2-top-name { font-size: var(--font-size-name,26px); font-weight: 900; color: #0f172a; letter-spacing: -0.5px; line-height: 1.08; margin-bottom: 5px; font-family: var(--resume-font-family,'Inter',sans-serif); }
+  .t2-top-subtitle { font-size: 12px; font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.85; }
+  .t2-top-divider { width: 48px; height: 2.5px; background: linear-gradient(90deg, #1e3a5f, #3b82f6); border-radius: 2px; margin: 0 auto 10px; }
+  .t2-top-contacts { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 5px; }
+  .t2-top-contact-link { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; color: #1e3a5f; text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
+  .t2-top-contact-link:hover { color: #3b82f6; border-bottom-color: #3b82f6; }
+  .t2-top-contact-link svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .t2-nationality { text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; font-size: 11px; font-weight: 500; color: #1e3a5f; }
+  .t2-top-location { font-size: 10.5px; color: #64748b; margin-top: 3px; letter-spacing: 0.3px; font-weight: 400; }
+
+  /* Photo area — square, no padding, flush edges, same bg as sidebar */
+  .t2-top-photo { flex: 0 0 30%; display: flex; align-items: center; justify-content: center; padding: 15px 15px 5px 15px; }
+  .t2-top-photo .qr-box { width: 130px; height: 130px; position: relative; padding-bottom: 0; overflow: hidden; border-radius: 8px; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.2); background: transparent; }
+  .t2-top-photo .qr-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px !important; }
+
+  /* DIVIDER ROW — About line left, SKILLS label right, perfectly aligned */
+  .t2-divider-row { display: flex; align-items: flex-start; position: relative; z-index: 1; }
+  .t2-divider-row > .main-section-title { flex: 1; margin-top: 0; }
+  .t2-skills-label { flex: 0 0 30%; padding: 22px 18px 5px; position: relative; }
+  .t2-skills-label::before { content: ""; position: absolute; top: 12px; left: 18px; right: 18px; border-top: 1px solid rgba(255,255,255,0.35); }
+  .t2-skills-label .sidebar-head { color: white !important; border: none !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+
+  /* BODY ROW - content left, sidebar right */
+  .t2-body { display: flex; flex: 1; align-items: stretch; position: relative; z-index: 1; }
+  .t2-main-content { flex: 1; padding: 0 20px 24px 24px; margin-top: 0; }
+  .t2-sidebar { flex: 0 0 30%; padding: 8px 18px 24px 18px; color: white; align-self: stretch; }
+
+  /* T2 reversed layout — sidebar on left */
+  .resume-original.t2-reversed .t2-sidebar-bg { left: 0; right: auto; }
+  .resume-original.t2-reversed .t2-top-row { flex-direction: row-reverse; }
+  .resume-original.t2-reversed .t2-top-photo { border-radius: 12px 0 0 0; }
+  .resume-original.t2-reversed .t2-divider-row { flex-direction: row-reverse; }
+  .resume-original.t2-reversed .t2-body { flex-direction: row-reverse; }
+  .resume-original.t2-reversed .t2-main-content { padding: 0 24px 24px 20px; }
+  .resume-original.t2-reversed .t2-skills-label::before { left: 18px; right: 18px; }
+  .resume-original.pdf-friendly.t2-reversed .t2-sidebar-bg { border-right: 1px solid #cfcfcf; border-left: none; }
+  .t2-sidebar .sidebar-head { color: white; border-color: rgba(255,255,255,0.3); }
+  .t2-sidebar .skill-bullet { color: rgba(255,255,255,0.92); }
+  .t2-sidebar .skill-bullet::before { color: rgba(255,255,255,0.5); }
+  .t2-sidebar .edu-item, .t2-sidebar .edu-item div { color: rgba(255,255,255,0.9); }
+  .t2-sidebar .lang-meta span { color: rgba(255,255,255,0.95); }
+  .t2-sidebar .progress-bg { background: rgba(255,255,255,0.2); }
+  .t2-sidebar .progress-fill { background: white; }
+
   </style>
 </head>
 
@@ -1129,6 +1315,10 @@
               placeholder="https://myportfolio.com"></div>
         </div>
         <div class="form-group">
+          <label>LinkedIn Profile URL</label>
+          <input type="url" id="linkedinField" placeholder="https://linkedin.com/in/yourname">
+        </div>
+        <div class="form-group">
           <label>Profile Image / QR Code</label>
           <input type="file" id="qrFileInput" accept="image/*">
           <input type="hidden" id="qrUrl">
@@ -1156,6 +1346,16 @@
               <div class="li-side"></div>
             </div>
             Sidebar Right
+          </button>
+          <button class="btn-layout" id="layoutTemplate2Btn" onclick="setLayout('template2')">
+            <div class="layout-icon" style="flex-direction:column;gap:2px;width:32px;height:22px;align-items:stretch;">
+              <div style="height:8px;border-radius:3px;background:currentColor;opacity:0.9;"></div>
+              <div style="display:flex;gap:2px;flex:1;">
+                <div style="flex:1.4;border-radius:2px;background:currentColor;opacity:0.35;"></div>
+                <div style="flex:0.9;border-radius:2px;background:currentColor;opacity:0.8;"></div>
+              </div>
+            </div>
+            Classic
           </button>
         </div>
       </div>
@@ -1242,27 +1442,27 @@
       </div>
 
       <div class="section-card">
-        <div class="section-title">🔧 CORE SKILLS</div>
-        <div id="skillsContainer"></div>
-        <button class="btn-add" id="addSkillBtn">+ ADD SKILL</button>
+        <div class="section-title">🧩 SIDEBAR SECTIONS</div>
+        <div id="sidebarSectionsContainer"></div>
+        <div style="margin-top:4px;">
+          <select class="section-type-select" id="newSectionTypeSelect">
+            <option value="">— Choose section type to add —</option>
+            <option value="skills">Skills</option>
+            <option value="education">Education</option>
+            <option value="languages">Languages</option>
+            <option value="certifications">Certifications</option>
+            <option value="projects">Projects</option>
+            <option value="awards">Awards / Achievements</option>
+            <option value="custom">Custom (Bullets)</option>
+          </select>
+          <button class="btn-add" id="addSidebarSectionBtn">+ ADD SIDEBAR SECTION</button>
+        </div>
       </div>
 
       <div class="section-card">
         <div class="section-title">💼 WORK EXPERIENCE</div>
         <div id="expContainer"></div>
         <button class="btn-add" id="addExpBtn">+ ADD EXPERIENCE</button>
-      </div>
-
-      <div class="section-card">
-        <div class="section-title">🎓 EDUCATION</div>
-        <div id="eduContainer"></div>
-        <button class="btn-add" id="addEduBtn">+ ADD DEGREE</button>
-      </div>
-
-      <div class="section-card">
-        <div class="section-title">🌐 LANGUAGES</div>
-        <div id="langContainer"></div>
-        <button class="btn-add" id="addLangBtn">+ ADD LANGUAGE</button>
       </div>
 
       <div class="section-card">
@@ -1383,10 +1583,14 @@
 </div>
 
   <script>
-    let skills = [];
     let experiences = [];
-    let educations = [];
-    let languages = [];
+    // New unified sidebar sections model
+    // Each section: { id, type, title, items[] }
+    // types: skills | education | languages | certifications | projects | awards | custom
+    let sidebarSections = [];
+
+    // Legacy arrays kept for migration only
+    let _legacySkills = [], _legacyEducations = [], _legacyLanguages = [];
 
     // 10 beautiful sidebar color themes (gradients & solids)
     const sidebarThemes = [
@@ -1403,7 +1607,8 @@
     ];
 
     let currentThemeIndex = 0;
-    let currentLayout = 'normal'; // 'normal' | 'reversed'
+    let currentLayout = 'normal'; // 'normal' | 'reversed' | 'template2'
+    let t2Flipped = false; // independent flip state for Template 2
 
     let typography = {
       fontFamily: "'Inter', sans-serif",
@@ -1487,34 +1692,58 @@
     function setSidebarTheme(index) {
       currentThemeIndex = index;
       const theme = sidebarThemes[index];
-      const sidebarElement = document.querySelector('.resume-sidebar-exact');
-      if (sidebarElement) {
-        sidebarElement.style.background = theme.value;
-      }
+      const sidebarEl = document.querySelector('.resume-sidebar-exact');
+      if (sidebarEl) sidebarEl.style.background = theme.value;
+      // Also apply to Template 2 sidebar
+      const t2SidebarBg = document.querySelector('.t2-sidebar-bg');
+      if (t2SidebarBg) t2SidebarBg.style.background = theme.value;
       document.querySelectorAll('.color-swatch').forEach((swatch, i) => {
-        if (i === index) swatch.classList.add('active');
-        else swatch.classList.remove('active');
+        swatch.classList.toggle('active', i === index);
       });
       localStorage.setItem('sidebarThemeIndex', index);
     }
 
     function setLayout(layout) {
-      currentLayout = layout;
       const resume = document.getElementById('resumePreview');
-      if (resume) {
-        if (layout === 'reversed') {
-          resume.classList.add('layout-reversed');
+
+      if (layout === 'reversed') {
+        // If Template 2 is active, toggle T2 flip instead of switching layout
+        if (currentLayout === 'template2') {
+          t2Flipped = !t2Flipped;
+          if (resume) {
+            resume.classList.toggle('t2-reversed', t2Flipped);
+          }
+          const reversedBtn = document.getElementById('layoutReversedBtn');
+          if (reversedBtn) reversedBtn.classList.toggle('active', t2Flipped);
+          localStorage.setItem('t2Flipped', t2Flipped ? '1' : '0');
+          return;
+        }
+        // Template 1 normal flip
+        currentLayout = currentLayout === 'reversed' ? 'normal' : 'reversed';
+      } else {
+        currentLayout = layout;
+        // When switching to template2, restore saved t2Flipped state
+        if (layout === 'template2') {
+          t2Flipped = localStorage.getItem('t2Flipped') === '1';
         } else {
-          resume.classList.remove('layout-reversed');
+          t2Flipped = false;
         }
       }
-      const normalBtn = document.getElementById('layoutNormalBtn');
-      const reversedBtn = document.getElementById('layoutReversedBtn');
-      if (normalBtn && reversedBtn) {
-        normalBtn.classList.toggle('active', layout === 'normal');
-        reversedBtn.classList.toggle('active', layout === 'reversed');
+
+      if (resume) {
+        resume.classList.remove('layout-reversed', 'layout-template2', 't2-reversed');
+        if (currentLayout === 'reversed') resume.classList.add('layout-reversed');
+        if (currentLayout === 'template2') resume.classList.add('layout-template2');
+        if (currentLayout === 'template2' && t2Flipped) resume.classList.add('t2-reversed');
       }
-      localStorage.setItem('resumeLayout', layout);
+
+      const normalBtn   = document.getElementById('layoutNormalBtn');
+      const reversedBtn = document.getElementById('layoutReversedBtn');
+      const t2Btn       = document.getElementById('layoutTemplate2Btn');
+      if (normalBtn)   normalBtn.classList.toggle('active',   currentLayout === 'normal');
+      if (reversedBtn) reversedBtn.classList.toggle('active', currentLayout === 'reversed');
+      if (t2Btn)       t2Btn.classList.toggle('active',       currentLayout === 'template2');
+      localStorage.setItem('resumeLayout', currentLayout);
     }
 
     function renderColorSwatches() {
@@ -1540,18 +1769,34 @@
         emailField: document.getElementById('emailField').value,
         locationField: document.getElementById('locationField').value,
         portfolioField: document.getElementById('portfolioField').value,
+        linkedinField: document.getElementById('linkedinField').value,
         qrUrl: document.getElementById('qrUrl').value,
         summaryText: document.getElementById('summaryText').value,
-        skills: skills,
+        sidebarSections: sidebarSections,
         experiences: experiences,
-        educations: educations,
-        languages: languages,
         sidebarThemeIndex: currentThemeIndex,
         layout: currentLayout,
         typography: typography
       };
       localStorage.setItem('resumeBuilderData', JSON.stringify(data));
     }
+
+    // Migrate old flat arrays to new sidebarSections format
+    function migrateOldData(data) {
+      const sections = [];
+      if (Array.isArray(data.skills) && data.skills.length > 0) {
+        sections.push({ id: genId(), type: 'skills', title: 'Skills', items: data.skills.filter(s=>s.trim()).map(s=>({ value: s })) });
+      }
+      if (Array.isArray(data.educations) && data.educations.length > 0) {
+        sections.push({ id: genId(), type: 'education', title: 'Education', items: data.educations.map(e=>({ degree: e.degree||'', school: e.school||'', date: e.date||'' })) });
+      }
+      if (Array.isArray(data.languages) && data.languages.length > 0) {
+        sections.push({ id: genId(), type: 'languages', title: 'Languages', items: data.languages.map(l=>({ name: l.name||'', level: l.level||50 })) });
+      }
+      return sections;
+    }
+
+    function genId() { return Math.random().toString(36).substr(2,9); }
 
     function loadSavedData() {
       const saved = localStorage.getItem('resumeBuilderData');
@@ -1563,25 +1808,29 @@
           document.getElementById('emailField').value = data.emailField || '';
           document.getElementById('locationField').value = data.locationField || '';
           document.getElementById('portfolioField').value = data.portfolioField || '';
+          document.getElementById('linkedinField').value = data.linkedinField || '';
           document.getElementById('qrUrl').value = data.qrUrl || '';
           document.getElementById('summaryText').value = data.summaryText || '';
-          skills = data.skills || [];
           experiences = data.experiences || [];
-          educations = data.educations || [];
-          languages = data.languages || [];
+          // New format
+          if (Array.isArray(data.sidebarSections) && data.sidebarSections.length > 0) {
+            sidebarSections = data.sidebarSections;
+          } else {
+            // Legacy migration
+            sidebarSections = migrateOldData(data);
+          }
           if (data.sidebarThemeIndex !== undefined) currentThemeIndex = data.sidebarThemeIndex;
           if (data.layout) currentLayout = data.layout;
           if (data.typography) typography = data.typography;
-          renderSkillInputs();
+          t2Flipped = localStorage.getItem('t2Flipped') === '1';
+          renderSidebarSectionInputs();
           renderExpInputs();
-          renderEduInputs();
-          renderLangInputs();
           renderFullResume();
           setSidebarTheme(currentThemeIndex);
           setLayout(currentLayout);
           applyTypography();
           return true;
-        } catch (e) { }
+        } catch (e) { console.warn('loadSavedData error', e); }
       }
       return false;
     }
@@ -1589,12 +1838,90 @@
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
     function escapeHtmlAttr(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
 
+    function buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, expArr, qrData) {
+      const esc = escapeHtml;
+      const escA = escapeHtmlAttr;
+      const themeVal = sidebarThemes[currentThemeIndex].value;
+
+      // QR / photo
+      const qrSrc = qrData && qrData.trim() ? escA(qrData) : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eeeeee'/%3E%3Ctext x='15' y='55' fill='%23999' font-size='12'%3EPhoto%3C/text%3E%3C/svg%3E";
+
+      // Build sidebar from sidebarSections — skip first section head (shown in strip above)
+      const t2SidebarContent = buildSidebarHtml(true);
+
+      // First section title for the strip below photo divider
+      const firstSectionTitle = sidebarSections.length > 0 ? esc(sidebarSections[0].title) : '';
+
+      // Experience
+      let expHtml = '';
+      expArr.forEach(exp => {
+        let dateRange = '';
+        if (exp.startDate && exp.endDate) dateRange = `${exp.startDate} \u2013 ${exp.endDate}`;
+        else if (exp.startDate) dateRange = exp.startDate;
+        else if (exp.endDate) dateRange = exp.endDate;
+        let bulletsHtml = '';
+        if (exp.bullets) {
+          const lines = exp.bullets.split('\n').filter(l => l.trim().length > 0);
+          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${esc(l.trim())}</li>`).join('') + `</ul>`;
+        }
+        expHtml += `<div class="exp-node"><div class="exp-header"><span class="exp-title">${esc(exp.title)}</span><span class="exp-date">${esc(dateRange)}</span></div><div class="exp-company">${esc(exp.company)}</div>${bulletsHtml}</div>`;
+      });
+
+      // About/portfolio link
+      const aboutHtml = portfolio && portfolio.trim()
+        ? `<a href="${escA(portfolio)}" target="_blank" class="about-icon-link">About <i class="fas fa-arrow-up-right-from-square" style="margin-left:6px;font-size:10px;"></i></a>`
+        : `<span style="margin-right:12px;color:#1e3a5f;font-weight:500;">About</span>`;
+
+      return `
+      <div class="t2-wrap">
+        <div class="t2-sidebar-bg" style="background:${themeVal}"></div>
+        <!-- TOP ROW: header left + photo right, same flex row = always same height -->
+        <div class="t2-top-row">
+          <div class="t2-top-header">
+            <div class="t2-top-name">${esc(name)}</div>
+            <div class="t2-top-subtitle">IT Engineer &nbsp;&middot;&nbsp; Fuel System Management &nbsp;&middot;&nbsp; System Support Specialist</div>
+            <div class="t2-top-divider"></div>
+            <div class="t2-top-contacts">
+              <a href="${escA(phoneLink)}" class="t2-top-contact-link"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${esc(phoneRaw)}</a>
+              <a href="${escA(emailLink)}" class="t2-top-contact-link"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${esc(emailRaw)}</a>
+              ${linkedin.trim() ? `<a href="${escA(linkedin)}" target="_blank" class="t2-top-contact-link"><i class="fab fa-linkedin" style="font-size:11px;"></i> LinkedIn</a>` : ''}
+              <span class="t2-nationality">Nationality: Indian</span>
+            </div>
+            <div class="t2-top-location">${esc(location)}</div>
+          </div>
+          <div class="t2-top-photo">
+            <div class="qr-box"><img src="${qrSrc}" alt="Photo"></div>
+          </div>
+        </div>
+        <!-- DIVIDER LINE — spans full width, both columns -->
+        <div class="t2-divider-row">
+          <div class="main-section-title" style="display:flex;align-items:center;justify-content:space-between;margin:0;padding:0 20px 0 24px;">
+            <div style="display:flex;align-items:center;">${aboutHtml}</div>
+            <div class="main-title-line"></div>
+          </div>
+          ${firstSectionTitle ? `<div class="t2-skills-label"><span class="sidebar-head" style="margin:0;border:none;padding:0;">${firstSectionTitle}</span></div>` : '<div class="t2-skills-label"></div>'}
+        </div>
+        <!-- BODY ROW: content left + sidebar right -->
+        <div class="t2-body">
+          <div class="t2-main-content">
+            <div class="summary-text">${esc(summary).replace(/\n/g,'<br>') || ''}</div>
+            <div class="main-section-title"><span class="main-title-text">Experience</span><div class="main-title-line"></div></div>
+            ${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}
+          </div>
+          <aside class="t2-sidebar">
+            ${t2SidebarContent || '<div class="edu-item" style="opacity:0.6;">No sidebar sections added yet.</div>'}
+          </aside>
+        </div>
+      </div>`;
+    }
+
     function renderFullResume() {
       const name = document.getElementById('fullName').value || 'Mozahidul Islam';
       const phoneRaw = document.getElementById('phoneField').value || '0573008727';
       const emailRaw = document.getElementById('emailField').value || 'mozahid24k@gmail.com';
       const location = document.getElementById('locationField').value || 'Riyadh, Saudi Arabia';
       const portfolio = document.getElementById('portfolioField').value || '';
+      const linkedin  = document.getElementById('linkedinField').value  || '';
       const qrData = document.getElementById('qrUrl').value;
       const summary = document.getElementById('summaryText').value || '';
 
@@ -1602,23 +1929,7 @@
       const phoneLink = phoneClean ? `tel:${phoneClean}` : '#';
       const emailLink = emailRaw ? `mailto:${emailRaw}` : '#';
 
-      let skillsHtml = '';
-      skills.forEach(skill => { if (skill.trim()) skillsHtml += `<li class="skill-bullet">${escapeHtml(skill)}</li>`; });
-
-      let eduHtml = '';
-      educations.forEach(edu => {
-        if (edu.degree || edu.school) {
-          eduHtml += `<div class="edu-item"><div>${escapeHtml(edu.degree)}</div><div>${escapeHtml(edu.school)}</div><div>${escapeHtml(edu.date)}</div></div>`;
-        }
-      });
-
-      let languagesHtml = '';
-      languages.forEach(lang => {
-        if (lang.name) {
-          languagesHtml += `<div class="lang-item"><div class="lang-meta"><span>${escapeHtml(lang.name)}</span></div><div class="progress-bg"><div class="progress-fill" style="width: ${lang.level}%;"></div></div></div>`;
-        }
-      });
-
+      // Build experience HTML
       let expHtml = '';
       experiences.forEach(exp => {
         let dateRange = '';
@@ -1640,32 +1951,35 @@
         aboutPortfolioHtml = `<span style="margin-right:12px; color:#1e3a5f; font-weight:500;">About</span>`;
       }
 
+      // Build dynamic sidebar HTML from sidebarSections
+      const dynamicSidebarHtml = buildSidebarHtml();
+
+      const noPhotoSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eeeeee'/%3E%3Ctext x='15' y='55' fill='%23999' font-size='12'%3EPhoto%3C/text%3E%3C/svg%3E";
+      const photoSrc = qrData && qrData.trim() !== '' ? escapeHtmlAttr(qrData) : noPhotoSrc;
+
       const mainHtml = `
       <aside class="resume-sidebar-exact">
         <div class="profile-qr-area">
-          <div class="qr-box"><img src="${qrData && qrData.trim() !== '' ? escapeHtmlAttr(qrData) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23eeeeee\'/%3E%3Ctext x=\'15\' y=\'55\' fill=\'%23999\' font-size=\'12\'%3EQR Code%3C/text%3E%3C/svg%3E'}" alt="QR"></div>
+          <div class="qr-box"><img src="${photoSrc}" alt="Photo"></div>
           <div class="profile-name-exact">${escapeHtml(name)}</div>
         </div>
         <div class="sidebar-head">Contact</div>
-        <div class="contact-line"><a href="${escapeHtmlAttr(phoneLink)}" class="contact-link" style="display:flex; align-items:center; gap:12px; text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>${escapeHtml(phoneRaw)}</span></a></div>
-        <div class="contact-line"><a href="${escapeHtmlAttr(emailLink)}" class="contact-link" style="display:flex; align-items:center; gap:12px; text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>${escapeHtml(emailRaw)}</span></a></div>
+        <div class="contact-line"><a href="${escapeHtmlAttr(phoneLink)}" class="contact-link" style="display:flex;align-items:center;gap:12px;text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>${escapeHtml(phoneRaw)}</span></a></div>
+        <div class="contact-line"><a href="${escapeHtmlAttr(emailLink)}" class="contact-link" style="display:flex;align-items:center;gap:12px;text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg><span>${escapeHtml(emailRaw)}</span></a></div>
         <div class="contact-line"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>${escapeHtml(location)}</span></div>
-        <div class="sidebar-head">Skills</div>
-        <ul style="list-style:none; padding-left:0;">${skillsHtml}</ul>
-        <div class="sidebar-head">Education</div>
-        ${eduHtml || '<div class="edu-item">—</div>'}
-        <div class="sidebar-head">Languages</div>
-        ${languagesHtml || '<div class="lang-item">—</div>'}
+        ${dynamicSidebarHtml || '<div class="edu-item" style="opacity:0.6;">No sidebar sections added yet.</div>'}
       </aside>
       <main class="resume-main-exact">
-        <div class="main-section-title" style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center;">${aboutPortfolioHtml}</div>
+        <div class="main-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;">${aboutPortfolioHtml}</div>
           <div class="main-title-line"></div>
         </div>
-        <div class="summary-text">${escapeHtml(summary).replace(/\n/g, '<br>') || 'IT Engineer with 3+ years of experience...'}</div>
+        <div class="summary-text">${escapeHtml(summary).replace(/\n/g, '<br>') || ''}</div>
         <div class="main-section-title"><span class="main-title-text">Experience</span><div class="main-title-line"></div></div>
-        ${expHtml || '<div>No experience entries added.</div>'}
-      </main>`;
+        ${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}
+      </main>
+      ${buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, experiences, qrData)}`;
+
       document.getElementById('resumePreview').innerHTML = mainHtml;
       setSidebarTheme(currentThemeIndex);
       setLayout(currentLayout);
@@ -1701,9 +2015,16 @@
         if (sidebarClone && originalSidebar) {
           sidebarClone.style.background = window.getComputedStyle(originalSidebar).background;
         }
+        // Also force template2 sidebar gradient
+        const originalT2Sidebar = document.querySelector('.t2-sidebar-bg');
+        const cloneT2Sidebar = clone.querySelector('.t2-sidebar-bg');
+        if (cloneT2Sidebar && originalT2Sidebar) {
+          cloneT2Sidebar.style.background = window.getComputedStyle(originalT2Sidebar).background;
+        }
         // Apply layout to clone
+        clone.classList.remove('layout-reversed', 'layout-template2', 't2-reversed');
         if (currentLayout === 'reversed') clone.classList.add('layout-reversed');
-        else clone.classList.remove('layout-reversed');
+        else if (currentLayout === 'template2') { clone.classList.add('layout-template2'); if (t2Flipped) clone.classList.add('t2-reversed'); }
         cloneWrapper.appendChild(clone);
         document.body.appendChild(cloneWrapper);
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -1820,8 +2141,9 @@
         clone.style.minHeight = 'auto';
         clone.style.margin = '0';
         clone.style.boxShadow = 'none';
+        clone.classList.remove('layout-reversed', 'layout-template2', 't2-reversed');
         if (currentLayout === 'reversed') clone.classList.add('layout-reversed');
-        else clone.classList.remove('layout-reversed');
+        else if (currentLayout === 'template2') { clone.classList.add('layout-template2'); if (t2Flipped) clone.classList.add('t2-reversed'); }
         cloneWrapper.appendChild(clone);
         document.body.appendChild(cloneWrapper);
 
@@ -1909,139 +2231,384 @@
       }
     }
 
-    // Editor rendering (identical to original, no changes)
-    function renderSkillInputs() {
-      const container = document.getElementById('skillsContainer');
-      container.innerHTML = '';
-      skills.forEach((skill, idx) => {
-        const div = document.createElement('div');
-        div.className = 'repeater-item';
-        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="skill">✖ Remove</button></div><input type="text" class="skill-input" value="${escapeHtml(skill)}" placeholder="e.g., Network Security" data-idx="${idx}">`;
-        container.appendChild(div);
-      });
-      document.querySelectorAll('.skill-input').forEach(inp => {
-        inp.addEventListener('input', (e) => { const idx = parseInt(e.target.dataset.idx); skills[idx] = e.target.value; renderFullResume(); });
-      });
-      document.querySelectorAll('.btn-remove[data-type="skill"]').forEach(btn => {
-        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); skills.splice(idx, 1); renderSkillInputs(); renderFullResume(); });
-      });
-    }
+    // ===== EXPERIENCE EDITOR =====
     function renderExpInputs() {
       const container = document.getElementById('expContainer');
+      if (!container) return;
       container.innerHTML = '';
       experiences.forEach((exp, idx) => {
         const div = document.createElement('div');
         div.className = 'repeater-item';
         div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="exp">✖ Remove</button></div>
-        <div class="form-row"><div class="form-group"><label>Title</label><input class="exp-title-inp" value="${escapeHtml(exp.title)}" data-idx="${idx}" data-field="title"></div></div>
-        <div class="form-row"><div class="form-group"><label>Company</label><input class="exp-company-inp" value="${escapeHtml(exp.company)}" data-idx="${idx}" data-field="company"></div></div>
-        <div class="form-row"><div class="form-group"><label>Start Date</label><input class="exp-start-inp" value="${escapeHtml(exp.startDate)}" data-idx="${idx}" data-field="startDate"></div>
-        <div class="form-group"><label>End Date</label><input class="exp-end-inp" value="${escapeHtml(exp.endDate)}" data-idx="${idx}" data-field="endDate"></div></div>
-        <div class="form-group"><label>Bullet points (one per line)</label><textarea rows="4" class="exp-bullets-inp" data-idx="${idx}" data-field="bullets">${escapeHtml(exp.bullets)}</textarea></div>`;
+        <div class="form-row"><div class="form-group"><label>Title</label><input class="exp-title-inp" value="${escapeHtml(exp.title||'')}" data-idx="${idx}" data-field="title"></div></div>
+        <div class="form-row"><div class="form-group"><label>Company</label><input class="exp-company-inp" value="${escapeHtml(exp.company||'')}" data-idx="${idx}" data-field="company"></div></div>
+        <div class="form-row">
+          <div class="form-group"><label>Start Date</label><input class="exp-start-inp" value="${escapeHtml(exp.startDate||'')}" data-idx="${idx}" data-field="startDate"></div>
+          <div class="form-group"><label>End Date</label><input class="exp-end-inp" value="${escapeHtml(exp.endDate||'')}" data-idx="${idx}" data-field="endDate"></div>
+        </div>
+        <div class="form-group"><label>Bullet points (one per line)</label><textarea rows="4" class="exp-bullets-inp" data-idx="${idx}" data-field="bullets">${escapeHtml(exp.bullets||'')}</textarea></div>`;
         container.appendChild(div);
       });
-      attachExpEvents();
-    }
-    function attachExpEvents() {
-      document.querySelectorAll('.exp-title-inp, .exp-company-inp, .exp-start-inp, .exp-end-inp, .exp-bullets-inp').forEach(el => {
-        el.removeEventListener('input', expHandler);
-        el.addEventListener('input', expHandler);
+      // Events
+      container.querySelectorAll('.exp-title-inp,.exp-company-inp,.exp-start-inp,.exp-end-inp,.exp-bullets-inp').forEach(el => {
+        el.addEventListener('input', (e) => {
+          const i = parseInt(e.target.dataset.idx), f = e.target.dataset.field;
+          if (!isNaN(i) && experiences[i]) { experiences[i][f] = e.target.value; renderFullResume(); }
+        });
       });
-      document.querySelectorAll('.btn-remove[data-type="exp"]').forEach(btn => {
-        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); experiences.splice(idx, 1); renderExpInputs(); renderFullResume(); });
-      });
-    }
-    function expHandler(e) {
-      const idx = parseInt(e.target.dataset.idx);
-      const field = e.target.dataset.field;
-      if (!isNaN(idx) && experiences[idx]) { experiences[idx][field] = e.target.value; renderFullResume(); }
-    }
-    function renderEduInputs() {
-      const container = document.getElementById('eduContainer');
-      container.innerHTML = '';
-      educations.forEach((edu, idx) => {
-        const div = document.createElement('div');
-        div.className = 'repeater-item';
-        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="edu">✖ Remove</button></div>
-        <div class="form-row"><div class="form-group"><label>Degree</label><input class="edu-degree-inp" value="${escapeHtml(edu.degree)}" data-idx="${idx}" data-field="degree"></div></div>
-        <div class="form-group"><label>School</label><input class="edu-school-inp" value="${escapeHtml(edu.school)}" data-idx="${idx}" data-field="school"></div>
-        <div class="form-group"><label>Date / Year</label><input class="edu-date-inp" value="${escapeHtml(edu.date)}" data-idx="${idx}" data-field="date"></div>`;
-        container.appendChild(div);
-      });
-      attachEduEvents();
-    }
-    function attachEduEvents() {
-      document.querySelectorAll('.edu-degree-inp, .edu-school-inp, .edu-date-inp').forEach(el => {
-        el.removeEventListener('input', eduHandler);
-        el.addEventListener('input', eduHandler);
-      });
-      document.querySelectorAll('.btn-remove[data-type="edu"]').forEach(btn => {
-        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); educations.splice(idx, 1); renderEduInputs(); renderFullResume(); });
-      });
-    }
-    function eduHandler(e) {
-      const idx = parseInt(e.target.dataset.idx);
-      const field = e.target.dataset.field;
-      if (educations[idx]) { educations[idx][field] = e.target.value; renderFullResume(); }
-    }
-    function renderLangInputs() {
-      const container = document.getElementById('langContainer');
-      container.innerHTML = '';
-      languages.forEach((lang, idx) => {
-        const div = document.createElement('div');
-        div.className = 'repeater-item';
-        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="lang">✖ Remove</button></div>
-        <div class="form-group"><label>Language</label><input class="lang-name-inp" value="${escapeHtml(lang.name)}" data-idx="${idx}" data-field="name"></div>
-        <div class="form-group"><label>Proficiency %</label><input type="range" min="0" max="100" class="lang-level-slider" value="${lang.level}" data-idx="${idx}" data-field="level"><span class="lang-level-val">${lang.level}%</span></div>`;
-        container.appendChild(div);
-        const slider = div.querySelector('.lang-level-slider');
-        const valSpan = div.querySelector('.lang-level-val');
-        slider.addEventListener('input', (e) => { const idx2 = parseInt(e.target.dataset.idx); languages[idx2].level = parseInt(e.target.value); valSpan.innerText = languages[idx2].level + '%'; renderFullResume(); });
-        div.querySelector('.lang-name-inp').addEventListener('input', (e) => { const idx2 = parseInt(e.target.dataset.idx); languages[idx2].name = e.target.value; renderFullResume(); });
-      });
-      document.querySelectorAll('.btn-remove[data-type="lang"]').forEach(btn => {
-        btn.addEventListener('click', (e) => { const idx = parseInt(btn.dataset.idx); languages.splice(idx, 1); renderLangInputs(); renderFullResume(); });
+      container.querySelectorAll('.btn-remove[data-type="exp"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = parseInt(btn.dataset.idx); experiences.splice(i, 1); renderExpInputs(); renderFullResume();
+        });
       });
     }
 
+    // ===== DYNAMIC SIDEBAR SECTION EDITOR =====
+
+    const SECTION_TYPE_LABELS = {
+      skills: { emoji: '🔧', label: 'Skills' },
+      education: { emoji: '🎓', label: 'Education' },
+      languages: { emoji: '🌐', label: 'Languages' },
+      certifications: { emoji: '📜', label: 'Certifications' },
+      projects: { emoji: '🚀', label: 'Projects' },
+      awards: { emoji: '🏆', label: 'Awards' },
+      custom: { emoji: '📝', label: 'Custom' }
+    };
+
+    function renderSidebarSectionInputs() {
+      const container = document.getElementById('sidebarSectionsContainer');
+      container.innerHTML = '';
+      sidebarSections.forEach((sec, secIdx) => {
+        const info = SECTION_TYPE_LABELS[sec.type] || { emoji: '📝', label: sec.type };
+        const wrap = document.createElement('div');
+        wrap.className = 'sidebar-section-item';
+        wrap.dataset.secIdx = secIdx;
+
+        // Header
+        const hdr = document.createElement('div');
+        hdr.className = 'sidebar-section-header';
+        hdr.innerHTML = `
+          <span class="sidebar-section-type-badge">${info.emoji} ${info.label}</span>
+          <input class="sidebar-section-title-input" type="text" value="${escapeHtml(sec.title)}" placeholder="Section title" data-sec="${secIdx}">
+          <div class="sidebar-section-controls">
+            ${secIdx > 0 ? `<button class="btn-section-ctrl" data-action="up" data-sec="${secIdx}">▲</button>` : ''}
+            ${secIdx < sidebarSections.length-1 ? `<button class="btn-section-ctrl" data-action="down" data-sec="${secIdx}">▼</button>` : ''}
+            <button class="btn-section-ctrl danger" data-action="delete" data-sec="${secIdx}">✖</button>
+          </div>`;
+        wrap.appendChild(hdr);
+
+        // Body
+        const body = document.createElement('div');
+        body.className = 'sidebar-section-body';
+        body.innerHTML = buildSectionBodyHtml(sec, secIdx);
+        wrap.appendChild(body);
+
+        // Toggle collapse
+        hdr.querySelector('.sidebar-section-type-badge').addEventListener('click', () => {
+          body.classList.toggle('collapsed');
+        });
+
+        // Title change
+        hdr.querySelector('.sidebar-section-title-input').addEventListener('input', (e) => {
+          sidebarSections[parseInt(e.target.dataset.sec)].title = e.target.value;
+          renderFullResume();
+          saveData();
+        });
+        // Stop title click from toggling
+        hdr.querySelector('.sidebar-section-title-input').addEventListener('click', e => e.stopPropagation());
+
+        // Controls
+        hdr.querySelectorAll('.btn-section-ctrl').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.sec);
+            const action = btn.dataset.action;
+            if (action === 'up' && idx > 0) {
+              [sidebarSections[idx-1], sidebarSections[idx]] = [sidebarSections[idx], sidebarSections[idx-1]];
+            } else if (action === 'down' && idx < sidebarSections.length-1) {
+              [sidebarSections[idx], sidebarSections[idx+1]] = [sidebarSections[idx+1], sidebarSections[idx]];
+            } else if (action === 'delete') {
+              sidebarSections.splice(idx, 1);
+            }
+            renderSidebarSectionInputs();
+            renderFullResume();
+            saveData();
+          });
+        });
+
+        // Item-level events wired after appending
+        container.appendChild(wrap);
+        attachSectionBodyEvents(body, secIdx);
+      });
+    }
+
+    function buildSectionBodyHtml(sec, secIdx) {
+      const esc = escapeHtml;
+      let itemsHtml = '';
+      const items = sec.items || [];
+
+      if (sec.type === 'skills' || sec.type === 'awards' || sec.type === 'custom') {
+        items.forEach((item, itemIdx) => {
+          itemsHtml += `<div class="section-item-row" data-sec="${secIdx}" data-item="${itemIdx}">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" class="dyn-item-value" value="${esc(item.value||'')}" placeholder="Enter item..." data-sec="${secIdx}" data-item="${itemIdx}" style="flex:1;background:#1c1c22;border:1px solid #2e2e38;border-radius:8px;padding:8px 10px;color:white;font-size:12px;font-family:'Inter',sans-serif;">
+              <button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}" style="padding:5px 8px;">✖</button>
+            </div>
+          </div>`;
+        });
+        itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Item</button>`;
+
+      } else if (sec.type === 'education') {
+        items.forEach((item, itemIdx) => {
+          itemsHtml += `<div class="section-item-row" data-sec="${secIdx}" data-item="${itemIdx}">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:6px;"><button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}">✖ Remove</button></div>
+            <div class="form-row">
+              <div class="form-group"><label>Degree / Qualification</label><input type="text" class="dyn-edu-degree" value="${esc(item.degree||'')}" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            </div>
+            <div class="form-group"><label>School / Institution</label><input type="text" class="dyn-edu-school" value="${esc(item.school||'')}" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            <div class="form-group"><label>Year / Date</label><input type="text" class="dyn-edu-date" value="${esc(item.date||'')}" placeholder="e.g. 2020–2023" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+          </div>`;
+        });
+        itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Education</button>`;
+
+      } else if (sec.type === 'languages') {
+        items.forEach((item, itemIdx) => {
+          itemsHtml += `<div class="section-item-row" data-sec="${secIdx}" data-item="${itemIdx}">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}">✖ Remove</button></div>
+            <div class="form-group"><label>Language</label><input type="text" class="dyn-lang-name" value="${esc(item.name||'')}" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            <div class="form-group" style="margin-top:8px;"><label>Proficiency: <span class="dyn-lang-val" data-sec="${secIdx}" data-item="${itemIdx}">${item.level||50}%</span></label>
+              <input type="range" min="0" max="100" class="dyn-lang-level" value="${item.level||50}" data-sec="${secIdx}" data-item="${itemIdx}" style="width:100%;accent-color:#ef4444;margin-top:4px;">
+            </div>
+          </div>`;
+        });
+        itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Language</button>`;
+
+      } else if (sec.type === 'certifications') {
+        items.forEach((item, itemIdx) => {
+          itemsHtml += `<div class="section-item-row" data-sec="${secIdx}" data-item="${itemIdx}">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:6px;"><button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}">✖ Remove</button></div>
+            <div class="form-group"><label>Certification Name</label><input type="text" class="dyn-cert-name" value="${esc(item.name||'')}" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Issuer</label><input type="text" class="dyn-cert-issuer" value="${esc(item.issuer||'')}" placeholder="e.g. Cisco, AWS" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+              <div class="form-group"><label>Year</label><input type="text" class="dyn-cert-year" value="${esc(item.year||'')}" placeholder="e.g. 2023" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            </div>
+          </div>`;
+        });
+        itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Certification</button>`;
+
+      } else if (sec.type === 'projects') {
+        items.forEach((item, itemIdx) => {
+          itemsHtml += `<div class="section-item-row" data-sec="${secIdx}" data-item="${itemIdx}">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:6px;"><button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}">✖ Remove</button></div>
+            <div class="form-group"><label>Project Name</label><input type="text" class="dyn-proj-name" value="${esc(item.name||'')}" data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            <div class="form-group"><label>Short Description (1 line)</label><input type="text" class="dyn-proj-desc" value="${esc(item.desc||'')}" placeholder="Brief summary..." data-sec="${secIdx}" data-item="${itemIdx}"></div>
+            <div class="form-group"><label>Project URL (optional)</label><input type="url" class="dyn-proj-url" value="${esc(item.url||'')}" placeholder="https://github.com/..." data-sec="${secIdx}" data-item="${itemIdx}"></div>
+          </div>`;
+        });
+        itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Project</button>`;
+      }
+
+      return `<div class="section-items-container">${itemsHtml}</div>`;
+    }
+
+    function attachSectionBodyEvents(bodyEl, secIdx) {
+      // Generic value inputs
+      bodyEl.querySelectorAll('.dyn-item-value').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          sidebarSections[s].items[i].value = e.target.value;
+          renderFullResume(); saveData();
+        });
+      });
+      // Remove buttons
+      bodyEl.querySelectorAll('.dyn-item-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const s = parseInt(btn.dataset.sec), i = parseInt(btn.dataset.item);
+          sidebarSections[s].items.splice(i, 1);
+          renderSidebarSectionInputs(); renderFullResume(); saveData();
+        });
+      });
+      // Add item button
+      bodyEl.querySelectorAll('.dyn-item-add').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const s = parseInt(btn.dataset.sec);
+          const type = sidebarSections[s].type;
+          const blank = type === 'education' ? { degree:'', school:'', date:'' }
+                      : type === 'languages' ? { name:'', level:50 }
+                      : type === 'certifications' ? { name:'', issuer:'', year:'' }
+                      : type === 'projects' ? { name:'', desc:'', url:'' }
+                      : { value:'' };
+          sidebarSections[s].items.push(blank);
+          renderSidebarSectionInputs(); renderFullResume(); saveData();
+        });
+      });
+      // Education fields
+      bodyEl.querySelectorAll('.dyn-edu-degree,.dyn-edu-school,.dyn-edu-date').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          const field = inp.classList.contains('dyn-edu-degree') ? 'degree' : inp.classList.contains('dyn-edu-school') ? 'school' : 'date';
+          sidebarSections[s].items[i][field] = e.target.value;
+          renderFullResume(); saveData();
+        });
+      });
+      // Language fields
+      bodyEl.querySelectorAll('.dyn-lang-name').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          sidebarSections[s].items[i].name = e.target.value;
+          renderFullResume(); saveData();
+        });
+      });
+      bodyEl.querySelectorAll('.dyn-lang-level').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          const val = parseInt(e.target.value);
+          sidebarSections[s].items[i].level = val;
+          const valSpan = bodyEl.querySelector(`.dyn-lang-val[data-sec="${s}"][data-item="${i}"]`);
+          if (valSpan) valSpan.textContent = val + '%';
+          renderFullResume(); saveData();
+        });
+      });
+      // Certification fields
+      bodyEl.querySelectorAll('.dyn-cert-name,.dyn-cert-issuer,.dyn-cert-year').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          const field = inp.classList.contains('dyn-cert-name') ? 'name' : inp.classList.contains('dyn-cert-issuer') ? 'issuer' : 'year';
+          sidebarSections[s].items[i][field] = e.target.value;
+          renderFullResume(); saveData();
+        });
+      });
+      // Project fields
+      bodyEl.querySelectorAll('.dyn-proj-name,.dyn-proj-desc,.dyn-proj-url').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
+          const field = inp.classList.contains('dyn-proj-name') ? 'name' : inp.classList.contains('dyn-proj-desc') ? 'desc' : 'url';
+          sidebarSections[s].items[i][field] = e.target.value;
+          renderFullResume(); saveData();
+        });
+      });
+    }
+
+    // Render a single section to sidebar HTML
+    function renderSectionToHtml(sec, skipHead) {
+      const esc = escapeHtml;
+      const escA = escapeHtmlAttr;
+      const items = sec.items || [];
+      let html = skipHead ? '' : `<div class="sidebar-head">${esc(sec.title)}</div>`;
+
+      if (sec.type === 'skills' || sec.type === 'awards' || sec.type === 'custom') {
+        html += `<ul style="list-style:none;padding-left:0;">`;
+        items.forEach(item => { if ((item.value||'').trim()) html += `<li class="skill-bullet">${esc(item.value)}</li>`; });
+        html += `</ul>`;
+
+      } else if (sec.type === 'education') {
+        items.forEach(item => {
+          if (item.degree || item.school) {
+            html += `<div class="edu-item"><div style="font-weight:700;">${esc(item.degree)}</div><div>${esc(item.school)}</div><div style="opacity:0.8;">${esc(item.date)}</div></div>`;
+          }
+        });
+
+      } else if (sec.type === 'languages') {
+        items.forEach(item => {
+          if (item.name) {
+            html += `<div class="lang-item"><div class="lang-meta"><span>${esc(item.name)}</span><span>${item.level||0}%</span></div><div class="progress-bg"><div class="progress-fill" style="width:${item.level||0}%"></div></div></div>`;
+          }
+        });
+
+      } else if (sec.type === 'certifications') {
+        items.forEach(item => {
+          if (item.name) {
+            html += `<div class="edu-item">
+              <div style="font-weight:700;">${esc(item.name)}</div>
+              ${item.issuer ? `<div>${esc(item.issuer)}</div>` : ''}
+              ${item.year ? `<div style="opacity:0.8;">${esc(item.year)}</div>` : ''}
+            </div>`;
+          }
+        });
+
+      } else if (sec.type === 'projects') {
+        items.forEach(item => {
+          if (item.name) {
+            const hasUrl = item.url && item.url.trim();
+            html += `<div class="edu-item" style="margin-bottom:14px;">
+              <div style="display:flex;align-items:center;gap:6px;font-weight:700;">
+                ${esc(item.name)}
+                ${hasUrl ? `<a href="${escA(item.url)}" target="_blank" style="display:inline-flex;align-items:center;color:inherit;text-decoration:none;opacity:0.7;flex-shrink:0;" title="Open project">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                </a>` : ''}
+              </div>
+              ${item.desc ? `<div style="opacity:0.85;margin-top:2px;">${esc(item.desc)}</div>` : ''}
+            </div>`;
+          }
+        });
+      }
+
+      return html;
+    }
+
+    // Build full sidebar HTML from sidebarSections[]
+    // skipFirstHead: true = skip the sidebar-head of the first section (used in T2 where header is shown in the strip)
+    function buildSidebarHtml(skipFirstHead) {
+      return sidebarSections.map((sec, idx) => renderSectionToHtml(sec, skipFirstHead && idx === 0)).join('');
+    }
+
+    // ===== LEGACY STUBS (kept so any stray references don't crash) =====
+    function renderSkillInputs() { renderSidebarSectionInputs(); }
+    function renderEduInputs()   { renderSidebarSectionInputs(); }
+    function renderLangInputs()  { renderSidebarSectionInputs(); }
+
     function loadOriginalResume() {
+      // Clear any stale saved data so old sections don't bleed in
+      localStorage.removeItem('resumeBuilderData');
       document.getElementById('fullName').value = 'Mozahidul Islam';
       document.getElementById('phoneField').value = '0573008727';
       document.getElementById('emailField').value = 'mozahid24k@gmail.com';
       document.getElementById('locationField').value = 'Riyadh, Saudi Arabia';
       document.getElementById('portfolioField').value = 'https://mozahid24k.github.io/portfolio/';
+      document.getElementById('linkedinField').value  = 'https://linkedin.com/in/mozahidul-islam';
       document.getElementById('qrUrl').value = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIcAAAB8CAYAAABBsqPQAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAKM0lEQVR4nO2dW5PcKAyF+///xDzmNS+531Ozxe6wpT6NjnQAu6czUpUq1QGEkD/bIGzP5ekE+fXr19Plcvlfrfz588ctU8XaUTVrp/nr1W3jtPLz58/0uGd9PVJO6engKDhcKTj+Aji+fPmyFOCuLShWFDgUZQcqCmIWDpTv37+ffqCiE2jHMWv6+/fva7v2R8FxW4ZScBQcBccTBEdzKqtnwNHrd22DsToabNcIJM9OE1v27t07Ohb0iWm2LfrL4MAYKcdNgkORM+D48OHDVdsRELNXmVmdHcuPHz9ojLJ94leyevn07fdwKjoG/BUfB4fpbcLwgOJSBW8Hg4wFnPil1mT/KhJTlOVAKjoLDlYKj4HCl4DgYDmZXgWN23FGftqzmHM9ScNzWLTiepeC4rfvwcByVIbXZv1GZtWtllNHLZkwjODCb6ikLbotfNiv79etX6jsbC/Ohx+nwDOms7sxzzNbFoEVweO2UqwFu2a/YZeNW7CpacCSk4Hi2a38UHHGwXy0cR8nKk2C2LEqfs7bK9j6zyfIcyoQ5mpAqMTpKCo6Cw5WCo+Bw5dKcPFqjB2TYcpGVRXDM2kWbdixv3ry5OchdEZyj4GjL4DOO2wXPoDN0l0RwzMqucR4Fx4lacKAUHAk4vn37llbbrl16bVlL6WYPonIraHDYfiJbZ6iFgGUj2y3IliEcamp+eD4vHdM8ZbtspeY7IFh5sdmYyO1nFtb4i0YHZdQWKfHieL+w4pgVHwTGWVwlHywQ3H6327PBRcLQD1vppscC+mbb6d4PD/mBb9itpbjYxa/feG6c22GWK8DbpAONu6GjeE72LcsQVSXn/hcEhqTX8muHAR/q8PmZXDqtw4KS/K+7nFByvEA5MsJ0Ox2ipOPtQjmcnet0wWsoqcHhLxREczH/mg6efPn26sRX1yXyxcET+WTj6nGVG6QyFDV6ZJN3rMUErFsoIDsUHTz9+/ChPJLMxYnYRDsUHlIJDlIKjFxYcQx+yb9HfCw47fzoMDsX5XXUVUbbsrY7gmPWBST8wPcdhdzyjuQwrw7YtDn1MOEFV3ieefhKs4NCFxWE3HL0MX00oOBJwtGV619GznkfD8f79+ysfVDjaMxxe27vD8W9loDe7lMW22aCgtMBE/cz4y/wbCVv+eWNTl+lRf1YYHOry9SomLAiMspUJaTYo6AM+JrjT3ywcs7eKKAmm2EVhcKxIwTFoy+RVwcEuK+2geqpcqjCdi+XMLoOD1R0FmN1WmA/YZ/ZWgT4y31XorFo42oNWkU+RH8afuavBrvx9tLfC4FAmW1ajPIe90q1cDZg0O22SmfE3mp/sumIOtOBAOQuO7BuGBUfC4bPgiJ7n2AXHbKYV27IM9DY4FL1Z9gjBj+Dw6qpweHVH/mVT3gwOPGjKybYiyoSUxWhQt+Bo0vcjlFXFCI7uc9uyLzgGnRYc+q7sihwGR3Y5igciWl6xZTCDA9syOCKfvQBGcChLWSzrB2AEh7L8j9p5Y2uSjX1TWvcmSo7gDJmdFcpsemVCqkgWjugKuXJbyU6gR4/+4ZNgM3ZlzQa34Lgd218Ph3I5GwUiUxdFgcNK35Gcyf7ZAzm6dczCsXp7sWinners2qfPIziy8cSygfqBYDSzTlYnpN5glKsX2hnVtVvo+JmIDBzt6sC24RWxdtG3pvbTDwyOaMuexajgGJQxZXCglowiy6KcgxVlH4bJCEJPWZ5jJWfDfI/yHKztjdqKBUfBUXAUHMO2DwFHVpQDvutAMDlrQqp89klJ99PPPhUcBcdVXfuj4Cg4ruraH+zb55EqcOBDNlnpy62u0TfA7TJNzdKyLKIXg9E4canojRvLWZmS5WzHgj3sMw3HrN7rj/GwM1VJBjFZmZDaspW9lZ0xKjieCo6Co+A4Do6jZAWOFUgV2XFS3MsfK9GEVPJhuqUgBUfB4UrB8Zhw/AMx4353caPgsAAAAABJRU5ErkJggg==';
       document.getElementById('summaryText').value = 'IT Engineer with 3+ years of experience in technical support and IT operations at Reben Petroleum, KSA. Skilled in fuel management systems, IT automation, networking, POS systems, remote troubleshooting, and infrastructure maintenance. Self-motivated and adaptable, with a strong focus on operational efficiency and technical excellence.';
-      skills = ['IT Support & Tools', 'Operating Systems', 'System Administration', 'Email & Communication', 'Remote Support', 'Scripting & Firebase', 'IT Compliance & Documentation', 'End-User Support & Training'];
+
+      sidebarSections = [
+        {
+          id: genId(), type: 'skills', title: 'Skills',
+          items: [
+            { value: 'IT Support & Helpdesk' }, { value: 'System Administration' },
+            { value: 'Networking (VLAN/VPN/BGP)' }, { value: 'FortiGate Firewall' },
+            { value: 'POS & FMS Management' }, { value: 'CCTV & IoT Systems' },
+            { value: 'AWS / Azure Cloud' }, { value: 'Active Directory / DNS / DHCP' }
+          ]
+        },
+        {
+          id: genId(), type: 'education', title: 'Education',
+          items: [
+            { degree: 'Master Diploma – Cloud Computing', school: 'Jetking, New Delhi', date: 'Mar – Sep 2022' },
+            { degree: 'B.Tech', school: 'Mansarovar Global University, Bhopal', date: '05/2019 – 04/2023' }
+          ]
+        },
+        {
+          id: genId(), type: 'languages', title: 'Languages',
+          items: [
+            { name: 'Arabic', level: 55 }, { name: 'English', level: 80 }, { name: 'Hindi / Urdu', level: 95 }
+          ]
+        }
+      ];
+
       experiences = [
         { title: 'IT Executive', company: 'Masaken Al-Majdal Petroleum Services (REBEN) – Riyadh', startDate: 'Jul 2024', endDate: 'Present', bullets: 'Managing IT operations across 65+ fuel stations, including hardware, software, and automation systems.\nProvide technical support for Fuel Management Systems (FMS).\nConfigured and maintained CCTV and security systems.\nInstallation and manage networks, POS Devices, operating systems.\nCoordinated with vendors (ALITCO, GVR, Fusion) for troubleshooting and issue resolution.\nFamiliar with FortiGate firewall and Server 2019.\nConduct quarterly station inspections and managed Civil Defense Equipment.\nProvide remote support through various communication channels, ensuring minimal downtime.' },
         { title: 'Desktop Support Engineer', company: 'Tech Mahindra – Noida', startDate: '08/2023', endDate: '07/2024', bullets: 'PC Assembling Disassembling & Printer - Scanner Setup\nWindows 7-11 Installation & Troubleshooting\nIP Configuration (IPv4 - TCP/IP), DHCP, DNS, LAN/Wi-Fi Troubleshooting\nProvided technical support for Windows OS, hardware, and approved software.\nManaged patches and performed remote troubleshooting using LogMeIn\nHandled Citrix Virtual Apps support, including profile management and login issues.\nMonitored system health and performed scheduled maintenance.\nManaged user accounts, VPNs, backups & IP Phones.' },
         { title: 'Networking Intern', company: 'Jetking Tech Lab', startDate: '', endDate: '2023', bullets: 'Hands-on PC assembly, Windows deployments, IPv4/DHCP/DNS configuration\nHardware troubleshooting and lab equipment maintenance' }
       ];
-      educations = [
-        { degree: 'Master Diploma in Cloud Computing', school: 'Jetking, New Delhi', date: 'Mar – Sep 2022' },
-        { degree: 'B.Tech', school: 'Mansarovar Global University, Bhopal', date: '05/2019 – 04/2023' }
-      ];
-      languages = [
-        { name: 'Arabic', level: 55 },
-        { name: 'English', level: 80 },
-        { name: 'Hindi / Urdu', level: 95 }
-      ];
+
       typography = {
         fontFamily: "'Inter', sans-serif",
-        sizeName: 24,
-        sizeSidebarHead: 15,
-        sizeSidebarBody: 13,
-        sizeMainHead: 15,
-        sizeSummary: 14,
-        sizeExpTitle: 15,
-        sizeExpCompany: 14,
-        sizeExpBullets: 13
+        sizeName: 24, sizeSidebarHead: 15, sizeSidebarBody: 13,
+        sizeMainHead: 15, sizeSummary: 14, sizeExpTitle: 15,
+        sizeExpCompany: 14, sizeExpBullets: 13
       };
-      renderSkillInputs();
+
+      renderSidebarSectionInputs();
       renderExpInputs();
-      renderEduInputs();
-      renderLangInputs();
       renderFullResume();
       applyTypography();
     }
@@ -2049,10 +2616,28 @@
     // Initialize
     renderColorSwatches();
     initTypographyListeners();
-    document.getElementById('addSkillBtn').onclick = () => { skills.push(''); renderSkillInputs(); renderFullResume(); };
+    document.getElementById('addSidebarSectionBtn').onclick = () => {
+      const sel = document.getElementById('newSectionTypeSelect');
+      const type = sel.value;
+      if (!type) { alert('Please choose a section type first.'); return; }
+      const info = SECTION_TYPE_LABELS[type] || { label: type };
+      const blank = type === 'education' ? { degree:'', school:'', date:'' }
+                  : type === 'languages' ? { name:'', level:50 }
+                  : type === 'certifications' ? { name:'', issuer:'', year:'' }
+                  : type === 'projects' ? { name:'', desc:'', url:'' }
+                  : { value:'' };
+      sidebarSections.push({ id: genId(), type, title: info.label, items: [blank] });
+      sel.value = '';
+      renderSidebarSectionInputs();
+      renderFullResume();
+      saveData();
+      // Scroll to the new section
+      setTimeout(() => {
+        const container = document.getElementById('sidebarSectionsContainer');
+        if (container.lastElementChild) container.lastElementChild.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      }, 80);
+    };
     document.getElementById('addExpBtn').onclick = () => { experiences.push({ title: '', company: '', startDate: '', endDate: '', bullets: '' }); renderExpInputs(); renderFullResume(); };
-    document.getElementById('addEduBtn').onclick = () => { educations.push({ degree: '', school: '', date: '' }); renderEduInputs(); renderFullResume(); };
-    document.getElementById('addLangBtn').onclick = () => { languages.push({ name: '', level: 50 }); renderLangInputs(); renderFullResume(); };
     document.getElementById('loadOriginalBtn').onclick = () => { loadOriginalResume(); };
     // ===== PAYMENT SYSTEM =====
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzV7FJ7BWHItN9O5y1sB3DOfdGITYaVUAodXw2FDv4UCeNmilE2030OkVPpQqH1wYHQqw/exec';
@@ -2110,9 +2695,10 @@
           emailField:    document.getElementById('emailField').value,
           locationField: document.getElementById('locationField').value,
           portfolioField:document.getElementById('portfolioField').value,
+          linkedinField:document.getElementById('linkedinField').value,
           qrUrl:         document.getElementById('qrUrl').value,
           summaryText:   document.getElementById('summaryText').value,
-          skills, experiences, educations, languages,
+          sidebarSections, experiences,
           currentThemeIndex, currentLayout, typography,
           downloadType: pendingDownloadType,
           submittedAt: new Date().toISOString()
@@ -2199,15 +2785,21 @@
           if (data.emailField     !== undefined) document.getElementById('emailField').value     = data.emailField;
           if (data.locationField  !== undefined) document.getElementById('locationField').value  = data.locationField;
           if (data.portfolioField !== undefined) document.getElementById('portfolioField').value = data.portfolioField;
+          if (data.linkedinField  !== undefined) document.getElementById('linkedinField').value  = data.linkedinField;
           if (data.qrUrl          !== undefined) document.getElementById('qrUrl').value          = data.qrUrl;
           if (data.summaryText    !== undefined) document.getElementById('summaryText').value    = data.summaryText;
-          if (Array.isArray(data.skills))      { skills      = data.skills;      renderSkillInputs(); }
-          if (Array.isArray(data.experiences)) { experiences = data.experiences; renderExpInputs(); }
-          if (Array.isArray(data.educations))  { educations  = data.educations;  renderEduInputs(); }
-          if (Array.isArray(data.languages))   { languages   = data.languages;   renderLangInputs(); }
+          if (Array.isArray(data.sidebarSections) && data.sidebarSections.length > 0) {
+            sidebarSections = data.sidebarSections;
+          } else if (data.skills || data.educations || data.languages) {
+            sidebarSections = migrateOldData(data);
+          }
+          if (Array.isArray(data.experiences)) { experiences = data.experiences; }
           if (data.currentThemeIndex !== undefined) setSidebarTheme(data.currentThemeIndex);
-          if (data.currentLayout)   setLayout(data.currentLayout);
-          if (data.typography)      { typography = { ...typography, ...data.typography }; applyTypography(); }
+          if (data.sidebarThemeIndex !== undefined) setSidebarTheme(data.sidebarThemeIndex);
+          if (data.currentLayout || data.layout) setLayout(data.currentLayout || data.layout);
+          if (data.typography) { typography = { ...typography, ...data.typography }; applyTypography(); }
+          renderSidebarSectionInputs();
+          renderExpInputs();
           renderFullResume();
           alert('✅ Resume loaded! Click Download 1 to generate PDF.');
         } catch(err) {
@@ -2235,8 +2827,9 @@
       reader.onerror = function() { alert('Failed to read file. Please try again.'); };
       reader.readAsDataURL(file);
     });
-    ['fullName', 'phoneField', 'emailField', 'locationField', 'portfolioField', 'summaryText'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => renderFullResume());
+    ['fullName', 'phoneField', 'emailField', 'locationField', 'portfolioField', 'linkedinField', 'summaryText'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => renderFullResume());
     });
     // ===== CHAR COUNT FOR SUMMARY =====
     function updateCharCount() {
@@ -2286,9 +2879,10 @@
         emailField: document.getElementById('emailField').value,
         locationField: document.getElementById('locationField').value,
         portfolioField: document.getElementById('portfolioField').value,
+        linkedinField: document.getElementById('linkedinField').value,
         qrUrl: document.getElementById('qrUrl').value,
         summaryText: document.getElementById('summaryText').value,
-        skills, experiences, educations, languages,
+        sidebarSections, experiences,
         sidebarThemeIndex: currentThemeIndex,
         layout: currentLayout,
         typography
@@ -2332,17 +2926,18 @@
           document.getElementById('portfolioField').value = data.portfolioField|| '';
           document.getElementById('qrUrl').value          = data.qrUrl         || '';
           document.getElementById('summaryText').value    = data.summaryText   || '';
-          skills      = data.skills      || [];
           experiences = data.experiences || [];
-          educations  = data.educations  || [];
-          languages   = data.languages   || [];
+          // Support both new and old format
+          if (Array.isArray(data.sidebarSections) && data.sidebarSections.length > 0) {
+            sidebarSections = data.sidebarSections;
+          } else {
+            sidebarSections = migrateOldData(data);
+          }
           if (data.sidebarThemeIndex !== undefined) currentThemeIndex = data.sidebarThemeIndex;
           if (data.layout) currentLayout = data.layout;
           if (data.typography) typography = { ...typography, ...data.typography };
-          renderSkillInputs();
+          renderSidebarSectionInputs();
           renderExpInputs();
-          renderEduInputs();
-          renderLangInputs();
           renderFullResume();
           setSidebarTheme(currentThemeIndex);
           setLayout(currentLayout);
