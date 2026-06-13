@@ -2090,9 +2090,9 @@
         });
         // -------------------------------------------------------------
 
-        // Render at high resolution
+        // Render at optimized resolution
         const canvas = await html2canvas(clone, {
-          scale: 3,
+          scale: 2.5,
           backgroundColor: '#ffffff',
           useCORS: true,
           logging: false
@@ -2100,7 +2100,7 @@
 
         document.body.removeChild(cloneWrapper);
 
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
@@ -2110,7 +2110,7 @@
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         // Add the first page
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
 
         // Only add a second page if the remaining content height exceeds 20mm (avoids near-empty pages)
         let remainingHeight = imgHeight - pdfHeight;
@@ -2120,7 +2120,7 @@
           while (remainingHeight > 20) {
             pdf.addPage();
             totalPages++;
-            pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, yOffset, imgWidth, imgHeight);
             remainingHeight -= pdfHeight;
             yOffset -= pdfHeight;
           }
@@ -2216,7 +2216,7 @@
         });
 
         const canvas = await html2canvas(clone, {
-          scale: 3,
+          scale: 2.5,
           backgroundColor: '#ffffff',
           useCORS: true,
           logging: false
@@ -2224,7 +2224,7 @@
 
         document.body.removeChild(cloneWrapper);
 
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
         const pdfWidth = 210;
@@ -2232,7 +2232,7 @@
         const imgWidth = pdfWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
 
         let remainingHeight = imgHeight - pdfHeight;
         let totalPages = 1;
@@ -2240,7 +2240,7 @@
           let yOffset = -pdfHeight;
           while (remainingHeight > 20) {
             pdf.addPage(); totalPages++;
-            pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, yOffset, imgWidth, imgHeight);
             remainingHeight -= pdfHeight; yOffset -= pdfHeight;
           }
         }
