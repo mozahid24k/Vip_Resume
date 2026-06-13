@@ -477,6 +477,42 @@
       top: 0px;
     }
 
+    /* ===== EXPERIENCE TIMELINE ===== */
+    .exp-timeline {
+      position: relative;
+      padding-left: 20px;
+      padding-top: 2px;
+      border-left: 2px solid #c8d6e8;
+      margin-left: 4px;
+      margin-top: 8px;
+    }
+    .exp-timeline::before {
+      content: "";
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 2px;
+      height: 10px;
+      background: white;
+      z-index: 2;
+    }
+    .exp-node { position: relative; }
+    .exp-node::before {
+      content: "";
+      position: absolute;
+      left: -27px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #1e3a5f;
+      z-index: 3;
+    }
+    .pdf-friendly .exp-timeline { border-left-color: #b0bec5; }
+    .pdf-friendly .exp-timeline::before { background: white; }
+    .pdf-friendly .exp-node::before { background: #0f172a; }
+    .exp-section-icon { font-size: 14px; margin-right: 6px; line-height: 1; }
+
     .about-icon-link {
       text-decoration: none;
       color: inherit;
@@ -828,13 +864,14 @@
 
   /* Temporary clone styles for PDF generation (no visual effect on main UI) */
     .pdf-clone-wrapper {
-      position: fixed;
-      top: -9999px;
+      position: absolute;
+      top: 0;
       left: -9999px;
       z-index: -9999;
       background: white;
       width: 210mm;
       box-shadow: none;
+      overflow: visible;
     }
 
     /* ===== PDF-FRIENDLY (HR / Print version) ===== */
@@ -872,6 +909,10 @@
       filter: none !important;
     }
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-link svg { stroke: #111 !important; fill: none; }
+    /* Fix T1 sidebar-head horizontal line visibility in HR print */
+    .resume-original.pdf-friendly .resume-sidebar-exact .sidebar-head {
+      border-bottom-color: #999 !important;
+    }
     .resume-original.pdf-friendly .t2-sidebar .sidebar-head,
     .resume-original.pdf-friendly .t2-skills-label::before { border-color: rgba(0,0,0,0.2) !important; }
     
@@ -1236,7 +1277,7 @@
   .t2-wrap { display: none; width: 100%; flex-direction: column; font-family: var(--resume-font-family,'Inter',sans-serif); background: white; position: relative; }
   .resume-original.layout-template2 .t2-wrap { display: flex !important; }
 
-  .t2-sidebar-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 30%; z-index: 0; }
+  .t2-sidebar-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 27.5%; z-index: 0; }
 
   /* TOP ROW - header + photo side by side, naturally same height */
   .t2-top-row { display: flex; align-items: stretch; position: relative; z-index: 1; }
@@ -1252,21 +1293,21 @@
   .t2-top-location { font-size: 10.5px; color: #64748b; margin-top: 3px; letter-spacing: 0.3px; font-weight: 400; }
 
   /* Photo area — square, no padding, flush edges, same bg as sidebar */
-  .t2-top-photo { flex: 0 0 30%; display: flex; align-items: center; justify-content: center; padding: 15px 15px 5px 15px; }
-  .t2-top-photo .qr-box { width: 130px; height: 130px; position: relative; padding-bottom: 0; overflow: hidden; border-radius: 8px; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.2); background: transparent; }
+  .t2-top-photo { flex: 0 0 27.5%; display: flex; align-items: center; justify-content: center; padding: 28px 15px 5px 15px; }
+  .t2-top-photo .qr-box { width: 125px; height: 125px; position: relative; padding-bottom: 0; overflow: hidden; border-radius: 8px; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.2); background: transparent; }
   .t2-top-photo .qr-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px !important; }
 
   /* DIVIDER ROW — About line left, SKILLS label right, perfectly aligned */
   .t2-divider-row { display: flex; align-items: flex-start; position: relative; z-index: 1; }
   .t2-divider-row > .main-section-title { flex: 1; margin-top: 0; }
-  .t2-skills-label { flex: 0 0 30%; padding: 22px 18px 5px; position: relative; }
+  .t2-skills-label { flex: 0 0 27.5%; padding: 22px 18px 5px; position: relative; }
   .t2-skills-label::before { content: ""; position: absolute; top: 12px; left: 18px; right: 18px; border-top: 1px solid rgba(255,255,255,0.35); }
   .t2-skills-label .sidebar-head { color: white !important; border: none !important; margin: 0 !important; padding: 0 !important; background: none !important; }
 
   /* BODY ROW - content left, sidebar right */
   .t2-body { display: flex; flex: 1; align-items: stretch; position: relative; z-index: 1; }
   .t2-main-content { flex: 1; padding: 0 20px 24px 24px; margin-top: 0; }
-  .t2-sidebar { flex: 0 0 30%; padding: 8px 18px 24px 18px; color: white; align-self: stretch; }
+  .t2-sidebar { flex: 0 0 27.5%; padding: 8px 18px 24px 18px; color: white; align-self: stretch; }
 
   /* T2 reversed layout — sidebar on left */
   .resume-original.t2-reversed .t2-sidebar-bg { left: 0; right: auto; }
@@ -1905,8 +1946,8 @@
         <div class="t2-body">
           <div class="t2-main-content">
             <div class="summary-text">${esc(summary).replace(/\n/g,'<br>') || ''}</div>
-            <div class="main-section-title"><span class="main-title-text">Experience</span><div class="main-title-line"></div></div>
-            ${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}
+            <div class="main-section-title"><span class="main-title-text"><span class="exp-section-icon">💼</span>Experience</span><div class="main-title-line"></div></div>
+            <div class="exp-timeline">${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}</div>
           </div>
           <aside class="t2-sidebar">
             ${t2SidebarContent || '<div class="edu-item" style="opacity:0.6;">No sidebar sections added yet.</div>'}
@@ -1975,8 +2016,8 @@
           <div class="main-title-line"></div>
         </div>
         <div class="summary-text">${escapeHtml(summary).replace(/\n/g, '<br>') || ''}</div>
-        <div class="main-section-title"><span class="main-title-text">Experience</span><div class="main-title-line"></div></div>
-        ${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}
+        <div class="main-section-title"><span class="main-title-text"><span class="exp-section-icon">💼</span>Experience</span><div class="main-title-line"></div></div>
+        <div class="exp-timeline">${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}</div>
       </main>
       ${buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, experiences, qrData)}`;
 
@@ -2061,14 +2102,10 @@
 
         const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        });
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
-        const pdfWidth = 210; // A4 width in mm
-        const pdfHeight = 297; // A4 height in mm
+        const pdfWidth = 210;
+        const pdfHeight = 297;
         const imgWidth = pdfWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
@@ -2190,7 +2227,6 @@
         const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-
         const pdfWidth = 210;
         const pdfHeight = 297;
         const imgWidth = pdfWidth;
@@ -2511,7 +2547,7 @@
       } else if (sec.type === 'languages') {
         items.forEach(item => {
           if (item.name) {
-            html += `<div class="lang-item"><div class="lang-meta"><span>${esc(item.name)}</span><span>${item.level||0}%</span></div><div class="progress-bg"><div class="progress-fill" style="width:${item.level||0}%"></div></div></div>`;
+            html += `<div class="lang-item"><div class="lang-meta"><span>${esc(item.name)}</span></div><div class="progress-bg"><div class="progress-fill" style="width:${item.level||0}%"></div></div></div>`;
           }
         });
 
