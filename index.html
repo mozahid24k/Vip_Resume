@@ -289,6 +289,15 @@
       margin-left: -14px;
       letter-spacing: -0.5px;
     }
+    .profile-jobtitle-exact {
+      font-size: var(--font-size-jobtitle, 11px);
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      margin-left: -14px;
+      margin-top: 5px;
+      letter-spacing: 0.5px;
+    }
 
     .sidebar-head {
       font-size: var(--font-size-sidebar-head, 15px);
@@ -885,6 +894,7 @@
     .resume-original.pdf-friendly .t2-sidebar-bg { border-left: 1px solid #cfcfcf; }
 
     .resume-original.pdf-friendly .resume-sidebar-exact .profile-name-exact,
+    .resume-original.pdf-friendly .resume-sidebar-exact .profile-jobtitle-exact,
     .resume-original.pdf-friendly .resume-sidebar-exact .sidebar-head,
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-line,
     .resume-original.pdf-friendly .resume-sidebar-exact .contact-link,
@@ -1283,7 +1293,7 @@
   .t2-top-row { display: flex; align-items: stretch; position: relative; z-index: 1; }
   .t2-top-header { flex: 1; text-align: center; padding: 22px 28px 14px; display: flex; flex-direction: column; justify-content: center; gap: 0; }
   .t2-top-name { font-size: var(--font-size-name,26px); font-weight: 900; color: #0f172a; letter-spacing: -0.5px; line-height: 1.08; margin-bottom: 5px; font-family: var(--resume-font-family,'Inter',sans-serif); }
-  .t2-top-subtitle { font-size: 12px; font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.85; }
+  .t2-top-subtitle { font-size: 12px; font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; margin-bottom: 10px; opacity: 0.85; }
   .t2-top-divider { width: 48px; height: 2.5px; background: linear-gradient(90deg, #1e3a5f, #3b82f6); border-radius: 2px; margin: 0 auto 10px; }
   .t2-top-contacts { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 5px; }
   .t2-top-contact-link { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; color: #1e3a5f; text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
@@ -1343,6 +1353,10 @@
         <div class="form-row">
           <div class="form-group"><label>Full name</label><input type="text" id="fullName"
               placeholder="Mozahidul Islam"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Job Title / Role Tagline</label><input type="text" id="jobTitleField"
+              placeholder="e.g. IT Engineer · Network Specialist"></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label>Phone</label><input type="tel" id="phoneField" placeholder="0573008727"></div>
@@ -1425,6 +1439,12 @@
             <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Full Name
                 Size</span><span id="val-name" style="color:#ef4444; font-weight:600;">24px</span></label>
             <input type="range" id="size-name" min="16" max="40" value="24" step="1"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Job Title
+                Size</span><span id="val-jobtitle" style="color:#ef4444; font-weight:600;">11px</span></label>
+            <input type="range" id="size-jobtitle" min="8" max="18" value="11" step="0.5"
               style="width:100%; accent-color:#ef4444;">
           </div>
           <div>
@@ -1654,6 +1674,7 @@
     let typography = {
       fontFamily: "'Inter', sans-serif",
       sizeName: 24,
+      sizeJobTitle: 11,
       sizeSidebarHead: 15,
       sizeSidebarBody: 13,
       sizeMainHead: 15,
@@ -1668,6 +1689,7 @@
       if (resume) {
         resume.style.setProperty('--resume-font-family', typography.fontFamily);
         resume.style.setProperty('--font-size-name', typography.sizeName + 'px');
+        resume.style.setProperty('--font-size-jobtitle', typography.sizeJobTitle + 'px');
         resume.style.setProperty('--font-size-sidebar-head', typography.sizeSidebarHead + 'px');
         resume.style.setProperty('--font-size-sidebar-body', typography.sizeSidebarBody + 'px');
         resume.style.setProperty('--font-size-main-head', typography.sizeMainHead + 'px');
@@ -1678,6 +1700,7 @@
       }
 
       const nameVal = document.getElementById('val-name'); if (nameVal) nameVal.innerText = typography.sizeName + 'px';
+      const jobTitleVal = document.getElementById('val-jobtitle'); if (jobTitleVal) jobTitleVal.innerText = typography.sizeJobTitle + 'px';
       const sbHeadVal = document.getElementById('val-sb-head'); if (sbHeadVal) sbHeadVal.innerText = typography.sizeSidebarHead + 'px';
       const sbBodyVal = document.getElementById('val-sb-body'); if (sbBodyVal) sbBodyVal.innerText = typography.sizeSidebarBody + 'px';
       const mainHeadVal = document.getElementById('val-main-head'); if (mainHeadVal) mainHeadVal.innerText = typography.sizeMainHead + 'px';
@@ -1689,6 +1712,7 @@
       const selectEl = document.getElementById('fontStyleSelect'); if (selectEl) selectEl.value = typography.fontFamily;
       const inputs = [
         { id: 'size-name', val: typography.sizeName },
+        { id: 'size-jobtitle', val: typography.sizeJobTitle },
         { id: 'size-sb-head', val: typography.sizeSidebarHead },
         { id: 'size-sb-body', val: typography.sizeSidebarBody },
         { id: 'size-main-head', val: typography.sizeMainHead },
@@ -1712,6 +1736,7 @@
 
       const inputs = [
         { id: 'size-name', key: 'sizeName' },
+        { id: 'size-jobtitle', key: 'sizeJobTitle' },
         { id: 'size-sb-head', key: 'sizeSidebarHead' },
         { id: 'size-sb-body', key: 'sizeSidebarBody' },
         { id: 'size-main-head', key: 'sizeMainHead' },
@@ -1806,6 +1831,7 @@
     function saveData() {
       const data = {
         fullName: document.getElementById('fullName').value,
+        jobTitle: document.getElementById('jobTitleField').value,
         phoneField: document.getElementById('phoneField').value,
         emailField: document.getElementById('emailField').value,
         locationField: document.getElementById('locationField').value,
@@ -1839,12 +1865,17 @@
 
     function genId() { return Math.random().toString(36).substr(2,9); }
 
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    function escapeHtmlAttr(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+    function boldText(str) { if (!str) return ''; return escapeHtml(str).replace(/\*([^*]+)\*/g, '<strong>$1</strong>'); }
+
     function loadSavedData() {
       const saved = localStorage.getItem('resumeBuilderData');
       if (saved) {
         try {
           const data = JSON.parse(saved);
           document.getElementById('fullName').value = data.fullName || '';
+          document.getElementById('jobTitleField').value = data.jobTitle || '';
           document.getElementById('phoneField').value = data.phoneField || '';
           document.getElementById('emailField').value = data.emailField || '';
           document.getElementById('locationField').value = data.locationField || '';
@@ -1876,11 +1907,7 @@
       return false;
     }
 
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-    function escapeHtmlAttr(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
-    function boldText(str) { if (!str) return ''; return escapeHtml(str).replace(/\*([^*]+)\*/g, '<strong>$1</strong>'); }
-
-    function buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, expArr, qrData) {
+    function buildTemplate2Html(name, jobTitle, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, expArr, qrData) {
       const esc = escapeHtml;
       const escA = escapeHtmlAttr;
       const themeVal = sidebarThemes[currentThemeIndex].value;
@@ -1921,7 +1948,7 @@
         <div class="t2-top-row">
           <div class="t2-top-header">
             <div class="t2-top-name">${esc(name)}</div>
-            <div class="t2-top-subtitle">IT Engineer &nbsp;&middot;&nbsp; Fuel System Management &nbsp;&middot;&nbsp; System Support Specialist</div>
+            ${jobTitle ? `<div class="t2-top-subtitle">${esc(jobTitle)}</div>` : ''}
             <div class="t2-top-divider"></div>
             <div class="t2-top-contacts">
               <a href="${escA(phoneLink)}" class="t2-top-contact-link"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${esc(phoneRaw)}</a>
@@ -1946,7 +1973,7 @@
         <!-- BODY ROW: content left + sidebar right -->
         <div class="t2-body">
           <div class="t2-main-content">
-            <div class="summary-text">${esc(summary).replace(/\n/g,'<br>') || ''}</div>
+            <div class="summary-text">${boldText(summary).replace(/\n/g,'<br>') || ''}</div>
             <div class="main-section-title"><span class="main-title-text"><span class="exp-section-icon">💼</span>Experience</span><div class="main-title-line"></div></div>
             <div class="exp-timeline">${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}</div>
           </div>
@@ -1959,6 +1986,7 @@
 
     function renderFullResume() {
       const name = document.getElementById('fullName').value || 'Mozahidul Islam';
+      const jobTitle = document.getElementById('jobTitleField').value || '';
       const phoneRaw = document.getElementById('phoneField').value || '0573008727';
       const emailRaw = document.getElementById('emailField').value || 'mozahid24k@gmail.com';
       const location = document.getElementById('locationField').value || 'Riyadh, Saudi Arabia';
@@ -2004,6 +2032,7 @@
         <div class="profile-qr-area">
           <div class="qr-box"><img src="${photoSrc}" alt="Photo"></div>
           <div class="profile-name-exact">${escapeHtml(name)}</div>
+          ${jobTitle ? `<div class="profile-jobtitle-exact">${escapeHtml(jobTitle)}</div>` : ''}
         </div>
         <div class="sidebar-head">Contact</div>
         <div class="contact-line"><a href="${escapeHtmlAttr(phoneLink)}" class="contact-link" style="display:flex;align-items:center;gap:12px;text-decoration:none;"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>${escapeHtml(phoneRaw)}</span></a></div>
@@ -2020,7 +2049,7 @@
         <div class="main-section-title"><span class="main-title-text"><span class="exp-section-icon">💼</span>Experience</span><div class="main-title-line"></div></div>
         <div class="exp-timeline">${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}</div>
       </main>
-      ${buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, experiences, qrData)}`;
+      ${buildTemplate2Html(name, jobTitle, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, experiences, qrData)}`;
 
       document.getElementById('resumePreview').innerHTML = mainHtml;
       setSidebarTheme(currentThemeIndex);
@@ -2571,7 +2600,7 @@
               <div style="display:flex;align-items:center;gap:6px;font-weight:700;">
                 ${boldText(item.name)}
                 ${hasUrl ? `<a href="${escA(item.url)}" target="_blank" style="display:inline-flex;align-items:center;color:inherit;text-decoration:none;opacity:0.7;flex-shrink:0;" title="Open project">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1 2-2h6"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                 </a>` : ''}
               </div>
               ${item.desc ? `<div style="opacity:0.85;margin-top:2px;">${boldText(item.desc)}</div>` : ''}
@@ -2598,6 +2627,7 @@
       // Clear any stale saved data so old sections don't bleed in
       localStorage.removeItem('resumeBuilderData');
       document.getElementById('fullName').value = 'Mozahidul Islam';
+      document.getElementById('jobTitleField').value = 'IT Engineer · Network Specialist';
       document.getElementById('phoneField').value = '0573008727';
       document.getElementById('emailField').value = 'mozahid24k@gmail.com';
       document.getElementById('locationField').value = 'Riyadh, Saudi Arabia';
@@ -2639,7 +2669,7 @@
 
       typography = {
         fontFamily: "'Inter', sans-serif",
-        sizeName: 24, sizeSidebarHead: 15, sizeSidebarBody: 13,
+        sizeName: 24, sizeJobTitle: 11, sizeSidebarHead: 15, sizeSidebarBody: 13,
         sizeMainHead: 15, sizeSummary: 14, sizeExpTitle: 15,
         sizeExpCompany: 14, sizeExpBullets: 13
       };
@@ -2864,7 +2894,7 @@
       reader.onerror = function() { alert('Failed to read file. Please try again.'); };
       reader.readAsDataURL(file);
     });
-    ['fullName', 'phoneField', 'emailField', 'locationField', 'portfolioField', 'linkedinField', 'summaryText'].forEach(id => {
+    ['fullName', 'jobTitleField', 'phoneField', 'emailField', 'locationField', 'portfolioField', 'linkedinField', 'summaryText'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', () => renderFullResume());
     });
@@ -2912,6 +2942,7 @@
     function getCurrentResumeData() {
       return {
         fullName: document.getElementById('fullName').value,
+        jobTitle: document.getElementById('jobTitleField').value,
         phoneField: document.getElementById('phoneField').value,
         emailField: document.getElementById('emailField').value,
         locationField: document.getElementById('locationField').value,
@@ -2957,6 +2988,7 @@
         try {
           const data = JSON.parse(e.target.result);
           document.getElementById('fullName').value       = data.fullName      || '';
+          document.getElementById('jobTitleField').value  = data.jobTitle      || '';
           document.getElementById('phoneField').value     = data.phoneField    || '';
           document.getElementById('emailField').value     = data.emailField    || '';
           document.getElementById('locationField').value  = data.locationField || '';
