@@ -1878,6 +1878,7 @@
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
     function escapeHtmlAttr(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+    function boldText(str) { if (!str) return ''; return escapeHtml(str).replace(/\*([^*]+)\*/g, '<strong>$1</strong>'); }
 
     function buildTemplate2Html(name, phoneRaw, phoneLink, emailRaw, emailLink, location, portfolio, linkedin, summary, expArr, qrData) {
       const esc = escapeHtml;
@@ -1903,7 +1904,7 @@
         let bulletsHtml = '';
         if (exp.bullets) {
           const lines = exp.bullets.split('\n').filter(l => l.trim().length > 0);
-          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${esc(l.trim())}</li>`).join('') + `</ul>`;
+          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${boldText(l.trim())}</li>`).join('') + `</ul>`;
         }
         expHtml += `<div class="exp-node"><div class="exp-header"><span class="exp-title">${esc(exp.title)}</span><span class="exp-date">${esc(dateRange)}</span></div><div class="exp-company">${esc(exp.company)}</div>${bulletsHtml}</div>`;
       });
@@ -1980,7 +1981,7 @@
         let bulletsHtml = '';
         if (exp.bullets) {
           const lines = exp.bullets.split('\n').filter(l => l.trim().length > 0);
-          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${escapeHtml(l.trim())}</li>`).join('') + `</ul>`;
+          bulletsHtml = `<ul class="exp-desc-list">` + lines.map(l => `<li>${boldText(l.trim())}</li>`).join('') + `</ul>`;
         }
         expHtml += `<div class="exp-node"><div class="exp-header"><span class="exp-title">${escapeHtml(exp.title)}</span><span class="exp-date">${escapeHtml(dateRange)}</span></div><div class="exp-company">${escapeHtml(exp.company)}</div>${bulletsHtml}</div>`;
       });
@@ -2015,7 +2016,7 @@
           <div style="display:flex;align-items:center;">${aboutPortfolioHtml}</div>
           <div class="main-title-line"></div>
         </div>
-        <div class="summary-text">${escapeHtml(summary).replace(/\n/g, '<br>') || ''}</div>
+        <div class="summary-text">${boldText(summary).replace(/\n/g, '<br>') || ''}</div>
         <div class="main-section-title"><span class="main-title-text"><span class="exp-section-icon">💼</span>Experience</span><div class="main-title-line"></div></div>
         <div class="exp-timeline">${expHtml || '<div style="color:#888;font-size:12px;">No experience entries added.</div>'}</div>
       </main>
@@ -2534,13 +2535,13 @@
 
       if (sec.type === 'skills' || sec.type === 'awards' || sec.type === 'custom') {
         html += `<ul style="list-style:none;padding-left:0;">`;
-        items.forEach(item => { if ((item.value||'').trim()) html += `<li class="skill-bullet">${esc(item.value)}</li>`; });
+        items.forEach(item => { if ((item.value||'').trim()) html += `<li class="skill-bullet">${boldText(item.value)}</li>`; });
         html += `</ul>`;
 
       } else if (sec.type === 'education') {
         items.forEach(item => {
           if (item.degree || item.school) {
-            html += `<div class="edu-item"><div style="font-weight:700;">${esc(item.degree)}</div><div>${esc(item.school)}</div><div style="opacity:0.8;">${esc(item.date)}</div></div>`;
+            html += `<div class="edu-item"><div style="font-weight:700;">${boldText(item.degree)}</div><div>${boldText(item.school)}</div><div style="opacity:0.8;">${boldText(item.date)}</div></div>`;
           }
         });
 
@@ -2555,9 +2556,9 @@
         items.forEach(item => {
           if (item.name) {
             html += `<div class="edu-item">
-              <div style="font-weight:700;">${esc(item.name)}</div>
-              ${item.issuer ? `<div>${esc(item.issuer)}</div>` : ''}
-              ${item.year ? `<div style="opacity:0.8;">${esc(item.year)}</div>` : ''}
+              <div style="font-weight:700;">${boldText(item.name)}</div>
+              ${item.issuer ? `<div>${boldText(item.issuer)}</div>` : ''}
+              ${item.year ? `<div style="opacity:0.8;">${boldText(item.year)}</div>` : ''}
             </div>`;
           }
         });
@@ -2568,12 +2569,12 @@
             const hasUrl = item.url && item.url.trim();
             html += `<div class="edu-item" style="margin-bottom:14px;">
               <div style="display:flex;align-items:center;gap:6px;font-weight:700;">
-                ${esc(item.name)}
+                ${boldText(item.name)}
                 ${hasUrl ? `<a href="${escA(item.url)}" target="_blank" style="display:inline-flex;align-items:center;color:inherit;text-decoration:none;opacity:0.7;flex-shrink:0;" title="Open project">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1 2-2h6"/></svg>
                 </a>` : ''}
               </div>
-              ${item.desc ? `<div style="opacity:0.85;margin-top:2px;">${esc(item.desc)}</div>` : ''}
+              ${item.desc ? `<div style="opacity:0.85;margin-top:2px;">${boldText(item.desc)}</div>` : ''}
             </div>`;
           }
         });
