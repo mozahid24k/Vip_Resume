@@ -172,7 +172,22 @@
       display: flex;
       justify-content: flex-end;
       margin-bottom: 12px;
+      gap: 6px;
     }
+
+    .btn-exp-ctrl {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #3a3a44;
+      border-radius: 8px;
+      color: #aaa;
+      font-size: 11px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-exp-ctrl:hover { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #ef4444; }
+    .btn-exp-ctrl.dup:hover { background: rgba(59,130,246,0.12); border-color: #3b82f6; color: #3b82f6; }
 
     .btn-remove {
       background: none;
@@ -682,6 +697,19 @@
     .char-count-label.warn { color: #f59e0b; }
     .char-count-label.over { color: #ef4444; }
 
+    .dup-warning {
+      font-size: 11px;
+      color: #f59e0b;
+      margin-top: 4px;
+      display: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .dup-warning.visible { display: block; }
+    input.dup-highlight, textarea.dup-highlight {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 0 2px rgba(245,158,11,0.2) !important;
+    }
+
     /* ===== PREVIEW REFRESH DOT (mobile) ===== */
     #previewUpdateDot {
       display: none;
@@ -751,6 +779,26 @@
     }
     .json-toast.success { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
     .json-toast.error   { background: rgba(239,68,68,0.15);  color: #ef4444;  border: 1px solid rgba(239,68,68,0.3); }
+
+    /* Saved toast */
+    #savedToast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(34,197,94,0.15);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 99999;
+    }
+    #savedToast.visible { opacity: 1; }
 
     /* Mobile adjustments for new elements */
     @media (max-width: 768px) {
@@ -1293,7 +1341,7 @@
   .t2-top-row { display: flex; align-items: stretch; position: relative; z-index: 1; }
   .t2-top-header { flex: 1; text-align: center; padding: 22px 28px 14px; display: flex; flex-direction: column; justify-content: center; gap: 0; }
   .t2-top-name { font-size: var(--font-size-name,26px); font-weight: 900; color: #0f172a; letter-spacing: -0.5px; line-height: 1.08; margin-bottom: 5px; font-family: var(--resume-font-family,'Inter',sans-serif); }
-  .t2-top-subtitle { font-size: 12px; font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; margin-bottom: 10px; opacity: 0.85; }
+  .t2-top-subtitle { font-size: var(--font-size-jobtitle, 12px); font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; margin-bottom: 10px; opacity: 0.85; }
   .t2-top-divider { width: 48px; height: 2.5px; background: linear-gradient(90deg, #1e3a5f, #3b82f6); border-radius: 2px; margin: 0 auto 10px; }
   .t2-top-contacts { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 5px; }
   .t2-top-contact-link { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; color: #1e3a5f; text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
@@ -1559,6 +1607,9 @@
     <button class="btn-primary" onclick="isAdmin ? downloadResumeAsPDF_HR() : openPaymentModal('hr')" style="background:#6b7280;">🖨️ Download 2</button>
   </div>
 
+
+<!-- Saved toast -->
+<div id="savedToast">✓ Saved</div>
 
 <!-- ===== PAYMENT MODAL ===== -->
 <div id="paymentModal">
@@ -1832,6 +1883,15 @@
       setSidebarTheme(currentThemeIndex);
     }
 
+    let _savedToastTimer = null;
+    function showSavedToast() {
+      const t = document.getElementById('savedToast');
+      if (!t) return;
+      t.classList.add('visible');
+      clearTimeout(_savedToastTimer);
+      _savedToastTimer = setTimeout(() => t.classList.remove('visible'), 1500);
+    }
+
     function saveData() {
       const data = {
         fullName: document.getElementById('fullName').value,
@@ -1851,6 +1911,7 @@
         typography: typography
       };
       localStorage.setItem('resumeBuilderData', JSON.stringify(data));
+      showSavedToast();
     }
 
     // Migrate old flat arrays to new sidebarSections format
@@ -2304,6 +2365,75 @@
       }
     }
 
+    // ===== DUPLICATE DETECTOR =====
+    function checkBulletDuplicates(changedIdx) {
+      const container = document.getElementById('expContainer');
+      if (!container) return;
+
+      container.querySelectorAll('.exp-bullets-inp').forEach(ta => {
+        const idx = parseInt(ta.dataset.idx);
+        const warn = ta.closest('.form-group').querySelector('.dup-warning');
+        if (!warn) return;
+
+        // Get this textarea's lines
+        const lines = ta.value.split('\n').map(l => l.trim().toLowerCase()).filter(Boolean);
+
+        // Check 1: duplicate within same entry
+        const seen = new Set();
+        let dupMsg = '';
+        for (const line of lines) {
+          if (seen.has(line)) { dupMsg = `⚠ Duplicate bullet within this entry`; break; }
+          seen.add(line);
+        }
+
+        // Check 2: duplicate in other entries
+        if (!dupMsg) {
+          experiences.forEach((exp, expIdx) => {
+            if (expIdx === idx || !exp.bullets) return;
+            const otherLines = exp.bullets.split('\n').map(l => l.trim().toLowerCase()).filter(Boolean);
+            for (const line of lines) {
+              if (otherLines.includes(line)) {
+                dupMsg = `⚠ Duplicate found in "${exp.title || ('Entry ' + (expIdx + 1))}"`;
+                break;
+              }
+            }
+          });
+        }
+
+        if (dupMsg) {
+          warn.textContent = dupMsg;
+          warn.classList.add('visible');
+          ta.classList.add('dup-highlight');
+        } else {
+          warn.classList.remove('visible');
+          ta.classList.remove('dup-highlight');
+        }
+      });
+    }
+
+    function checkSkillDuplicates(secIdx) {
+      const sec = sidebarSections[secIdx];
+      if (!sec) return;
+      const container = document.getElementById('sidebarSectionsContainer');
+      if (!container) return;
+      const inputs = container.querySelectorAll(`.dyn-item-value[data-sec="${secIdx}"]`);
+      const values = Array.from(inputs).map(i => i.value.trim().toLowerCase());
+
+      inputs.forEach((inp, i) => {
+        const val = inp.value.trim().toLowerCase();
+        const warn = inp.closest('.section-item-row')?.querySelector('.dup-warning');
+        if (!warn) return;
+        if (val && values.filter(v => v === val).length > 1) {
+          warn.textContent = `⚠ "${inp.value.trim()}" already exists`;
+          warn.classList.add('visible');
+          inp.classList.add('dup-highlight');
+        } else {
+          warn.classList.remove('visible');
+          inp.classList.remove('dup-highlight');
+        }
+      });
+    }
+
     // ===== EXPERIENCE EDITOR =====
     function renderExpInputs() {
       const container = document.getElementById('expContainer');
@@ -2312,26 +2442,61 @@
       experiences.forEach((exp, idx) => {
         const div = document.createElement('div');
         div.className = 'repeater-item';
-        div.innerHTML = `<div class="repeater-header"><button class="btn-remove" data-idx="${idx}" data-type="exp">✖ Remove</button></div>
+        const isFirst = idx === 0;
+        const isLast = idx === experiences.length - 1;
+        div.innerHTML = `
+        <div class="repeater-header">
+          <button class="btn-exp-ctrl" data-action="up" data-idx="${idx}" title="Move up" ${isFirst ? 'disabled style="opacity:0.3;cursor:default;"' : ''}>▲</button>
+          <button class="btn-exp-ctrl" data-action="down" data-idx="${idx}" title="Move down" ${isLast ? 'disabled style="opacity:0.3;cursor:default;"' : ''}>▼</button>
+          <button class="btn-exp-ctrl dup" data-action="dup" data-idx="${idx}" title="Duplicate">⧉ Copy</button>
+          <button class="btn-remove" data-idx="${idx}" data-type="exp">✖ Remove</button>
+        </div>
         <div class="form-row"><div class="form-group"><label>Title</label><input class="exp-title-inp" value="${escapeHtml(exp.title||'')}" data-idx="${idx}" data-field="title"></div></div>
         <div class="form-row"><div class="form-group"><label>Company</label><input class="exp-company-inp" value="${escapeHtml(exp.company||'')}" data-idx="${idx}" data-field="company"></div></div>
         <div class="form-row">
           <div class="form-group"><label>Start Date</label><input class="exp-start-inp" value="${escapeHtml(exp.startDate||'')}" data-idx="${idx}" data-field="startDate"></div>
           <div class="form-group"><label>End Date</label><input class="exp-end-inp" value="${escapeHtml(exp.endDate||'')}" data-idx="${idx}" data-field="endDate"></div>
         </div>
-        <div class="form-group"><label>Bullet points (one per line)</label><textarea rows="4" class="exp-bullets-inp" data-idx="${idx}" data-field="bullets">${escapeHtml(exp.bullets||'')}</textarea></div>`;
+        <div class="form-group"><label>Bullet points (one per line)</label><textarea rows="4" class="exp-bullets-inp" placeholder="One bullet per line&#10;Use *word* for bold, _word_ for italic" data-idx="${idx}" data-field="bullets">${escapeHtml(exp.bullets||'')}</textarea><div class="dup-warning"></div></div>`;
         container.appendChild(div);
       });
-      // Events
+
+      // Input change events
       container.querySelectorAll('.exp-title-inp,.exp-company-inp,.exp-start-inp,.exp-end-inp,.exp-bullets-inp').forEach(el => {
         el.addEventListener('input', (e) => {
           const i = parseInt(e.target.dataset.idx), f = e.target.dataset.field;
-          if (!isNaN(i) && experiences[i]) { experiences[i][f] = e.target.value; renderFullResume(); }
+          if (!isNaN(i) && experiences[i]) {
+            experiences[i][f] = e.target.value;
+            renderFullResume();
+            if (f === 'bullets') checkBulletDuplicates(i);
+          }
         });
       });
+
+      // Remove
       container.querySelectorAll('.btn-remove[data-type="exp"]').forEach(btn => {
         btn.addEventListener('click', () => {
           const i = parseInt(btn.dataset.idx); experiences.splice(i, 1); renderExpInputs(); renderFullResume();
+        });
+      });
+
+      // Reorder and duplicate
+      container.querySelectorAll('.btn-exp-ctrl').forEach(btn => {
+        if (btn.disabled) return;
+        btn.addEventListener('click', () => {
+          const i = parseInt(btn.dataset.idx);
+          const action = btn.dataset.action;
+          if (action === 'up' && i > 0) {
+            [experiences[i-1], experiences[i]] = [experiences[i], experiences[i-1]];
+            renderExpInputs(); renderFullResume();
+          } else if (action === 'down' && i < experiences.length - 1) {
+            [experiences[i], experiences[i+1]] = [experiences[i+1], experiences[i]];
+            renderExpInputs(); renderFullResume();
+          } else if (action === 'dup') {
+            const copy = JSON.parse(JSON.stringify(experiences[i]));
+            experiences.splice(i + 1, 0, copy);
+            renderExpInputs(); renderFullResume();
+          }
         });
       });
     }
@@ -2427,6 +2592,7 @@
               <input type="text" class="dyn-item-value" value="${esc(item.value||'')}" placeholder="Enter item..." data-sec="${secIdx}" data-item="${itemIdx}" style="flex:1;background:#1c1c22;border:1px solid #2e2e38;border-radius:8px;padding:8px 10px;color:white;font-size:12px;font-family:'Inter',sans-serif;">
               <button class="btn-section-ctrl danger dyn-item-remove" data-sec="${secIdx}" data-item="${itemIdx}" style="padding:5px 8px;">✖</button>
             </div>
+            <div class="dup-warning"></div>
           </div>`;
         });
         itemsHtml += `<button class="btn-add dyn-item-add" data-sec="${secIdx}" style="margin-top:4px;">+ Add Item</button>`;
@@ -2491,6 +2657,7 @@
           const s = parseInt(e.target.dataset.sec), i = parseInt(e.target.dataset.item);
           sidebarSections[s].items[i].value = e.target.value;
           renderFullResume(); saveData();
+          checkSkillDuplicates(s);
         });
       });
       // Remove buttons
@@ -2713,7 +2880,11 @@
       }, 80);
     };
     document.getElementById('addExpBtn').onclick = () => { experiences.push({ title: '', company: '', startDate: '', endDate: '', bullets: '' }); renderExpInputs(); renderFullResume(); };
-    document.getElementById('loadOriginalBtn').onclick = () => { loadOriginalResume(); };
+    document.getElementById('loadOriginalBtn').onclick = () => {
+      if (confirm('⚠️ This will replace all your current data with the sample resume.\n\nAre you sure? Any unsaved changes will be lost.')) {
+        loadOriginalResume();
+      }
+    };
     // ===== PAYMENT SYSTEM =====
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzV7FJ7BWHItN9O5y1sB3DOfdGITYaVUAodXw2FDv4UCeNmilE2030OkVPpQqH1wYHQqw/exec';
     const WHATSAPP_NUMBER   = '919471941594';
@@ -2921,14 +3092,18 @@
       if (len >= 300 && len <= 500) {
         fill.style.background = '#22c55e';
         label.classList.add('good');
+        label.textContent = len + ' characters ✓ ideal length';
       } else if (len > 500 && len <= 600) {
         fill.style.background = '#f59e0b';
         label.classList.add('warn');
+        label.textContent = len + ' characters — consider trimming';
       } else if (len > 600) {
         fill.style.background = '#ef4444';
         label.classList.add('over');
+        label.textContent = len + ' characters ⚠ too long — trim it down';
       } else {
         fill.style.background = '#ef4444';
+        label.textContent = len + ' characters';
       }
     }
     document.getElementById('summaryText').addEventListener('input', updateCharCount);
