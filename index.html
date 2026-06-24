@@ -2366,42 +2366,59 @@
     }
 
     // ===== DUPLICATE DETECTOR =====
-    function checkBulletDuplicates(changedIdx) {
+    function checkBulletDuplicates() {
       const container = document.getElementById('expContainer');
       if (!container) return;
+
+      // Build a full map of all bullets across all entries
+      // Map: normalizedLine -> [expIdx, ...]
+      const bulletMap = {};
+      experiences.forEach((exp, expIdx) => {
+        if (!exp.bullets) return;
+        exp.bullets.split('\n').forEach(line => {
+          const t = line.trim().toLowerCase();
+          if (!t) return;
+          if (!bulletMap[t]) bulletMap[t] = [];
+          bulletMap[t].push(expIdx);
+        });
+      });
 
       container.querySelectorAll('.exp-bullets-inp').forEach(ta => {
         const idx = parseInt(ta.dataset.idx);
         const warn = ta.closest('.form-group').querySelector('.dup-warning');
         if (!warn) return;
 
-        // Get this textarea's lines
         const lines = ta.value.split('\n').map(l => l.trim().toLowerCase()).filter(Boolean);
 
-        // Check 1: duplicate within same entry
+        // Check within same entry — any line appearing more than once
         const seen = new Set();
-        let dupMsg = '';
-        for (const line of lines) {
-          if (seen.has(line)) { dupMsg = `⚠ Duplicate bullet within this entry`; break; }
+        const seenDups = new Set();
+        lines.forEach(line => {
+          if (seen.has(line)) seenDups.add(line);
           seen.add(line);
+        });
+
+        // Check across entries — any line that also exists in another entry
+        const crossDups = [];
+        lines.forEach(line => {
+          if (!line) return;
+          const entries = bulletMap[line] || [];
+          const others = entries.filter(e => e !== idx);
+          if (others.length > 0) {
+            const title = experiences[others[0]]?.title || ('Entry ' + (others[0] + 1));
+            crossDups.push(`"${title}"`);
+          }
+        });
+
+        const msgs = [];
+        if (seenDups.size > 0) msgs.push(`⚠ ${seenDups.size} duplicate bullet(s) within this entry`);
+        if (crossDups.length > 0) {
+          const unique = [...new Set(crossDups)];
+          msgs.push(`⚠ Duplicate(s) also in ${unique.join(', ')}`);
         }
 
-        // Check 2: duplicate in other entries
-        if (!dupMsg) {
-          experiences.forEach((exp, expIdx) => {
-            if (expIdx === idx || !exp.bullets) return;
-            const otherLines = exp.bullets.split('\n').map(l => l.trim().toLowerCase()).filter(Boolean);
-            for (const line of lines) {
-              if (otherLines.includes(line)) {
-                dupMsg = `⚠ Duplicate found in "${exp.title || ('Entry ' + (expIdx + 1))}"`;
-                break;
-              }
-            }
-          });
-        }
-
-        if (dupMsg) {
-          warn.textContent = dupMsg;
+        if (msgs.length > 0) {
+          warn.textContent = msgs.join('  ·  ');
           warn.classList.add('visible');
           ta.classList.add('dup-highlight');
         } else {
@@ -2468,7 +2485,7 @@
           if (!isNaN(i) && experiences[i]) {
             experiences[i][f] = e.target.value;
             renderFullResume();
-            if (f === 'bullets') checkBulletDuplicates(i);
+            if (f === 'bullets') checkBulletDuplicates();
           }
         });
       });
@@ -2499,6 +2516,9 @@
           }
         });
       });
+
+      // Check pre-existing duplicates on render
+      setTimeout(checkBulletDuplicates, 0);
     }
 
     // ===== DYNAMIC SIDEBAR SECTION EDITOR =====
