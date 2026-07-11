@@ -1344,10 +1344,10 @@
   .t2-top-subtitle { font-size: var(--font-size-jobtitle, 12px); font-weight: 600; color: #1e3a5f; letter-spacing: 0.5px; margin-bottom: 10px; opacity: 0.85; }
   .t2-top-divider { width: 48px; height: 2.5px; background: linear-gradient(90deg, #1e3a5f, #3b82f6); border-radius: 2px; margin: 0 auto 10px; }
   .t2-top-contacts { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 5px; }
-  .t2-top-contact-link { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; color: #1e3a5f; text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
+  .t2-top-contact-link { display: inline-flex; align-items: center; gap: 5px; font-size: var(--font-size-contact, 11px); font-weight: 500; color: #1e3a5f; text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; transition: color 0.2s, border-color 0.2s; }
   .t2-top-contact-link:hover { color: #3b82f6; border-bottom-color: #3b82f6; }
-  .t2-top-contact-link svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-  .t2-nationality { text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; font-size: 11px; font-weight: 500; color: #1e3a5f; }
+  .t2-top-contact-link svg { width: 1.05em; height: 1.05em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .t2-nationality { text-decoration: none; border-bottom: 1px solid rgba(30,58,95,0.25); padding-bottom: 1px; font-size: var(--font-size-contact, 11px); font-weight: 500; color: #1e3a5f; }
   .t2-top-location { font-size: 10.5px; color: #64748b; margin-top: 3px; letter-spacing: 0.3px; font-weight: 400; }
 
   /* Photo area — square, no padding, flush edges, same bg as sidebar */
@@ -1497,6 +1497,12 @@
             <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Job Title
                 Size</span><span id="val-jobtitle" style="color:#ef4444; font-weight:600;">11px</span></label>
             <input type="range" id="size-jobtitle" min="8" max="18" value="11" step="0.5"
+              style="width:100%; accent-color:#ef4444;">
+          </div>
+          <div>
+            <label style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Contact Info (Phone/Email/Nationality)
+                Size</span><span id="val-contact" style="color:#ef4444; font-weight:600;">11px</span></label>
+            <input type="range" id="size-contact" min="8" max="16" value="11" step="0.5"
               style="width:100%; accent-color:#ef4444;">
           </div>
           <div>
@@ -1730,6 +1736,7 @@
       fontFamily: "'Inter', sans-serif",
       sizeName: 24,
       sizeJobTitle: 11,
+      sizeContact: 11,
       sizeSidebarHead: 15,
       sizeSidebarBody: 13,
       sizeMainHead: 15,
@@ -1745,6 +1752,7 @@
         resume.style.setProperty('--resume-font-family', typography.fontFamily);
         resume.style.setProperty('--font-size-name', typography.sizeName + 'px');
         resume.style.setProperty('--font-size-jobtitle', typography.sizeJobTitle + 'px');
+        resume.style.setProperty('--font-size-contact', typography.sizeContact + 'px');
         resume.style.setProperty('--font-size-sidebar-head', typography.sizeSidebarHead + 'px');
         resume.style.setProperty('--font-size-sidebar-body', typography.sizeSidebarBody + 'px');
         resume.style.setProperty('--font-size-main-head', typography.sizeMainHead + 'px');
@@ -1756,6 +1764,7 @@
 
       const nameVal = document.getElementById('val-name'); if (nameVal) nameVal.innerText = typography.sizeName + 'px';
       const jobTitleVal = document.getElementById('val-jobtitle'); if (jobTitleVal) jobTitleVal.innerText = typography.sizeJobTitle + 'px';
+      const contactVal = document.getElementById('val-contact'); if (contactVal) contactVal.innerText = typography.sizeContact + 'px';
       const sbHeadVal = document.getElementById('val-sb-head'); if (sbHeadVal) sbHeadVal.innerText = typography.sizeSidebarHead + 'px';
       const sbBodyVal = document.getElementById('val-sb-body'); if (sbBodyVal) sbBodyVal.innerText = typography.sizeSidebarBody + 'px';
       const mainHeadVal = document.getElementById('val-main-head'); if (mainHeadVal) mainHeadVal.innerText = typography.sizeMainHead + 'px';
@@ -1768,6 +1777,7 @@
       const inputs = [
         { id: 'size-name', val: typography.sizeName },
         { id: 'size-jobtitle', val: typography.sizeJobTitle },
+        { id: 'size-contact', val: typography.sizeContact },
         { id: 'size-sb-head', val: typography.sizeSidebarHead },
         { id: 'size-sb-body', val: typography.sizeSidebarBody },
         { id: 'size-main-head', val: typography.sizeMainHead },
@@ -1792,6 +1802,7 @@
       const inputs = [
         { id: 'size-name', key: 'sizeName' },
         { id: 'size-jobtitle', key: 'sizeJobTitle' },
+        { id: 'size-contact', key: 'sizeContact' },
         { id: 'size-sb-head', key: 'sizeSidebarHead' },
         { id: 'size-sb-body', key: 'sizeSidebarBody' },
         { id: 'size-main-head', key: 'sizeMainHead' },
@@ -2864,7 +2875,7 @@
 
       typography = {
         fontFamily: "'Inter', sans-serif",
-        sizeName: 24, sizeJobTitle: 11, sizeSidebarHead: 15, sizeSidebarBody: 13,
+        sizeName: 24, sizeJobTitle: 11, sizeContact: 11, sizeSidebarHead: 15, sizeSidebarBody: 13,
         sizeMainHead: 15, sizeSummary: 14, sizeExpTitle: 15,
         sizeExpCompany: 14, sizeExpBullets: 13
       };
